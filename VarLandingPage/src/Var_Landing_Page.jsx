@@ -114,78 +114,11 @@ const GlobalStyles = () => (
         display: inline-block;
         position: relative;
     }
-<<<<<<< HEAD
-        .proof-card {
-  /* Add a subtle halftone pattern to the card background */
-  background-image: radial-gradient(var(--text-primary) 0.5px, transparent 0);
-  background-size: 6px 6px;
-  background-position: 0 0;
-  
-  position: relative; /* Needed for the pseudo-element glow */
-  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
-  overflow: hidden; /* Keeps the glow effect contained */
-  z-index: 1;
-  align-self: stretch; /* Makes card fill the grid cell height */
-}
 
-/* Base styles for the ::before pseudo-element used for the glow */
-.proof-card::before {
-  content: '';
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200%; /* Make it large to create a soft, wide glow */
-  height: 200%;
-  filter: blur(60px);
-  opacity: 0;
-  transition: opacity 0.4s ease-in-out;
-  z-index: -1;
-}
-
-/* --- DEFINE GRADIENTS FOR EACH COLOR THEME --- */
-
-/* Magenta hover gets a magenta-dominant glow */
-.proof-container.hover-magenta .proof-card::before {
-  background-image: radial-gradient(circle, var(--accent-magenta) 0%, var(--accent-lime) 100%);
-}
-/* Lime hover gets a lime-dominant glow */
-.proof-container.hover-lime .proof-card::before {
-  background-image: radial-gradient(circle, var(--accent-lime) 0%, var(--accent-magenta) 100%);
-}
-
-/* The SVG Icon inside the card */
-.proof-card svg {
-    transition: transform 0.3s ease-out;
-}
-
-/* --- HOVER STATE --- */
-
-/* Generic hover transforms and icon scale for any proof container */
-.proof-container:hover .proof-card {
-  transform: translateY(-8px) rotate(-1.5deg);
-}
-.proof-container:hover .proof-card svg {
-    transform: scale(1.1);
-}
-
-/* Reveal glow on any hover */
-.proof-container:hover .proof-card::before {
-  opacity: 0.15; /* A subtle opacity for the background glow */
-}
-
-/* SPECIFIC hover shadow colors */
-.proof-container.hover-magenta:hover .proof-card {
-  box-shadow: 12px 12px 0px var(--accent-magenta);
-}
-
-.proof-container.hover-lime:hover .proof-card {
-  box-shadow: 12px 12px 0px var(--accent-lime);
-}
-        
-
-    /* --- REBUILT BOOK STYLES --- */
+    /* --- FINAL REBUILT BOOK STYLES --- */
     .solution-left {
-        perspective: 2500px;
+        /* A smaller perspective value makes the 3D effect more pronounced */
+        perspective: 1800px;
     }
 
     .book-container {
@@ -201,10 +134,21 @@ const GlobalStyles = () => (
         position: absolute;
         inset: 0;
         transform-origin: left center;
-        transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+        /* Slower transition with a different easing to make the flip more deliberate and visible */
+        transition: transform 0.8s cubic-bezier(0.3, 0, 0.3, 1);
+        transform-style: preserve-3d; /* This is crucial */
     }
 
+    .book-face {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+    }
+    
     .book-cover {
+        cursor: pointer;
+    }
+    .book-cover .book-face--front {
         border: 2px solid var(--text-primary);
         background-color: var(--text-primary);
         color: var(--bg-primary);
@@ -213,18 +157,28 @@ const GlobalStyles = () => (
         align-items: center;
         text-align: center;
         padding: 2rem;
-        cursor: pointer;
     }
-    
+    .book-cover .book-face--back {
+        border: 2px solid var(--text-primary);
+        background-color: #333; /* Dark back for the cover */
+        transform: rotateY(180deg);
+    }
+
     .book-cover.is-open {
         transform: rotateY(-180deg);
     }
 
     .book-page {
         inset: 6px 6px 6px 3px; /* Makes cover slightly larger */
+    }
+    .book-page .book-face--front {
         border: 2px solid var(--text-primary);
         background-color: var(--bg-primary);
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+    .book-page .book-face--back {
+        border: 2px solid var(--text-primary);
+        background-color: #F0EDE5; /* Slightly different back page color */
+        transform: rotateY(180deg);
     }
 
     .book-page.is-turned {
@@ -232,15 +186,15 @@ const GlobalStyles = () => (
     }
 
     .book-page.is-active {
-        transform: rotateY(0deg); /* No turn on active page */
+        transform: rotateY(0deg); /* Active page is perfectly still */
     }
 
     .page-tab {
         position: absolute;
-        right: -2px; /* To sit flush on the edge */
+        right: -2px;
         transform: translateX(100%) rotate(90deg) translateY(-100%);
         transform-origin: top left;
-        padding: 0.75rem 0; /* Vertical padding only */
+        padding: 0.75rem 0;
         border: 2px solid var(--text-primary);
         border-bottom: none;
         color: var(--text-primary);
@@ -283,7 +237,6 @@ const GlobalStyles = () => (
         opacity: 1;
         transform: translateY(0);
     }
-
   `}</style>
 );
 
@@ -315,7 +268,6 @@ const WindowControls = () => (
 
 const VarBotWaving = ({ className }) => (
     <svg className={className} viewBox="0 0 150 200" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 4, fill: "none", stroke: "var(--text-primary)"}}>
-        {/* Head and Body */}
         <rect x="35" y="20" width="80" height="60" fill="var(--bg-primary)"/>
         <path d="M75,20 V10 H65 V5 h20 v5 H75"/>
         <circle className="bot-eye" cx="60" cy="50" r="8" fill="var(--text-primary)"/>
@@ -323,18 +275,12 @@ const VarBotWaving = ({ className }) => (
         <circle className="bot-eye" cx="90" cy="50" r="8" fill="var(--text-primary)"/>
         <path d="M82,50 v-8" stroke="var(--bg-primary)" strokeWidth="2"/>
         <rect x="45" y="80" width="60" height="70" fill="var(--bg-primary)"/>
-        
-        {/* Left arm: Waving up with the ball attached */}
         <g className="bot-waving-arm">
-            <path d="M45,95 C 20,80 25,50 45,60" />
-            <path d="M45,60 m -10, 0 a 10,10 0 1,0 20,0 a 10,10 0 1,0 -20,0" fill="var(--bg-primary)"/>
+            <path d="M35,95 C 10,80 -10,100 20,60 Q 30 40, 50 50"/>
+            <path d="M15,65 m -10, 0 a 10,10 0 1,0 20,0 a 10,10 0 1,0 -20,0" fill="var(--bg-primary)"/>
         </g>
-        
-        {/* Right arm: Kept in its original style */}
         <path d="M115,95 C 130,100 135,120 120,130" />
         <path d="M120,135 m -10, 0 a 10,10 0 1,0 20,0 a 10,10 0 1,0 -20,0" fill="var(--bg-primary)"/>
-        
-        {/* Legs */}
         <path d="M60,150 C 50,170 40,190 50,200"/>
         <path d="M90,150 C 100,170 110,190 100,200"/>
     </svg>
@@ -348,6 +294,7 @@ const RocketSVG = ({ className }) => ( <svg className={className} viewBox="0 0 2
 const LockSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect> <path d="M7 11V7a5 5 0 0110 0v4"></path> </svg> );
 const WandSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="M15 4l6 6m-9-3l-6 6l9 9l6-6l-9-9z"></path> <path d="M9 21l-6-6"></path> <path d="M21 3L12 12"></path> </svg> );
 const BoltSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon> </svg> );
+
 const ExcellenceUnderline = ({ className }) => (
     <svg className={className} viewBox="0 0 200 20" preserveAspectRatio="none">
         <defs>
@@ -403,6 +350,90 @@ const services = [
 
 const BookComponent = () => {
     const [activePageIndex, setActivePageIndex] = React.useState(-1);
+    
+    // A ref for the timer that delays actions on hover/leave
+    const interactionTimer = React.useRef(null);
+    // A ref for the timer that sequences the page-turning animation
+    const animationSequenceTimer = React.useRef(null);
+    // A ref to track the current animation, preventing overlaps
+    const currentAnimationId = React.useRef(null);
+
+    const cleanupTimers = () => {
+        clearTimeout(interactionTimer.current);
+        clearTimeout(animationSequenceTimer.current);
+    };
+
+    // This function animates pages sequentially to a target index
+    const animatePages = (targetIndex) => {
+        // Give each new animation a unique ID. If a new one starts, the old one stops.
+        const animationId = Date.now();
+        currentAnimationId.current = animationId;
+
+        const pageTurnDelay = 150; // Milliseconds between each page turn
+
+        const step = () => {
+            // If a newer animation has started, stop this one from continuing.
+            if (currentAnimationId.current !== animationId) {
+                return;
+            }
+
+            setActivePageIndex(prevIndex => {
+                // Use the updater function to get the most recent state
+                const currentIndex = prevIndex;
+
+                // Determine direction and next page index
+                if (targetIndex > currentIndex) { // Opening pages
+                    const nextIndex = currentIndex + 1;
+                    // If we haven't reached the target yet, schedule the next step
+                    if (nextIndex <= targetIndex) {
+                        animationSequenceTimer.current = setTimeout(step, pageTurnDelay);
+                        return nextIndex;
+                    }
+                } else if (targetIndex < currentIndex) { // Closing pages
+                    const nextIndex = currentIndex - 1;
+                     // If we haven't reached the target yet, schedule the next step
+                    if (nextIndex >= targetIndex) {
+                        animationSequenceTimer.current = setTimeout(step, pageTurnDelay);
+                        return nextIndex;
+                    }
+                }
+                
+                // If animation is finished or no change is needed, return the current index
+                return currentIndex;
+            });
+        };
+        
+        // Start the animation sequence
+        step();
+    };
+
+    const handleMouseEnterTab = (targetIndex) => {
+        cleanupTimers();
+        if (targetIndex === activePageIndex) return; // No action if it's already the active page
+        
+        // Delay before starting the animation to avoid accidental triggers
+        interactionTimer.current = setTimeout(() => {
+            animatePages(targetIndex);
+        }, 150);
+    };
+
+    const handleMouseLeaveBook = () => {
+        cleanupTimers();
+        // Delay before closing the book completely
+        interactionTimer.current = setTimeout(() => {
+            animatePages(-1); 
+        }, 200);
+    };
+
+    const handleMouseEnterBook = () => {
+        // Cancel any pending close animation when the mouse re-enters the book
+        cleanupTimers();
+    };
+    
+    // Cleanup timers when the component is removed
+    React.useEffect(() => {
+        return () => cleanupTimers();
+    }, []);
 
     const getPageStyle = (index) => {
         const isTurned = activePageIndex > -1 && index < activePageIndex;
@@ -421,14 +452,18 @@ const BookComponent = () => {
     
     return (
         <div 
-            className="book-container" 
-            onMouseLeave={() => setActivePageIndex(-1)}
+            className="book-container"
+            onMouseEnter={handleMouseEnterBook}
+            onMouseLeave={handleMouseLeaveBook}
         >
             <div 
                 className={`book-cover ${activePageIndex > -1 ? 'is-open' : ''}`}
                 style={{ zIndex: activePageIndex > -1 ? 1 : 100 }}
             >
-                <h3 className="font-headline text-4xl">The Four-Step Symphony of Ours</h3>
+                <div className="book-face book-face--front">
+                     <h3 className="font-headline text-4xl">The Four-Step Symphony of Ours</h3>
+                </div>
+                <div className="book-face book-face--back"></div>
             </div>
             <div className="book-pages">
                 {services.map((service, index) => {
@@ -442,20 +477,23 @@ const BookComponent = () => {
                             className={pageClasses} 
                             style={getPageStyle(index)}
                         >
-                            <div 
-                                className="page-tab font-ui" 
-                                style={{ backgroundColor: service.color }}
-                                onMouseEnter={() => setActivePageIndex(index)}
-                            >
-                                {service.title}
-                            </div>
-                            <div className="page-content space-y-4">
-                                {service.illustration}
-                                <h3 className="font-headline text-3xl">{service.headline}</h3>
-                                <p className="page-description font-ui px-4">
-                                    {service.description}
-                                </p>
-                            </div>
+                           <div className="book-face book-face--front">
+                                <div 
+                                    className="page-tab font-ui" 
+                                    style={{ backgroundColor: service.color }}
+                                    onMouseEnter={() => handleMouseEnterTab(index)}
+                                >
+                                    {service.title}
+                                </div>
+                                <div className="page-content space-y-4">
+                                    {service.illustration}
+                                    <h3 className="font-headline text-3xl">{service.headline}</h3>
+                                    <p className="page-description font-ui px-4">
+                                        {service.description}
+                                    </p>
+                                </div>
+                           </div>
+                           <div className="book-face book-face--back"></div>
                         </div>
                     );
                 })}
@@ -466,8 +504,6 @@ const BookComponent = () => {
 
 
 export default function App() {
-    
-    
   const mainRef = React.useRef(null);
 
   React.useLayoutEffect(() => {
@@ -521,16 +557,12 @@ export default function App() {
           opacity: 0, y: 20, stagger: { amount: 0.5, from: "random" }, duration: 0.8, ease: 'power2.out'
         });
         
-       gsap.to(".underline-mask", { 
-    width: 200, 
-    ease: "none",
-    scrollTrigger: { 
-        trigger: ".philosophy-punchline", 
-        start: "top center", 
-        end: "bottom center", 
-        scrub: 1 
-    }, 
-});
+        gsap.to(".philosophy-underline .underline-mask", { 
+            width: 200, ease: "none",
+            scrollTrigger: { 
+                trigger: ".philosophy-punchline", start: "top center", end: "bottom center", scrub: 1 
+            }, 
+        });
 
         gsap.from([".solution-left", ".solution-right"], {
           scrollTrigger: { trigger: "#solution", start: "top 70%", toggleActions: "play none none reverse" },
@@ -589,15 +621,15 @@ export default function App() {
       <div className="paper-texture"></div>
       <main ref={mainRef} className="bg-[--bg-primary] text-[--text-primary] font-['Inter'] selection:bg-[--accent-lime] selection:text-[--text-primary]">
         
-<section id="hero" className="relative min-h-screen w-full mt-16 flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">            <div className="absolute inset-0 halftone-bg opacity-30"></div>
-           <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-7xl mx-auto -mt-24">
+        <section id="hero" className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">
+            <div className="absolute inset-0 halftone-bg opacity-30"></div>
+            <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-7xl mx-auto">
                 <div className="relative z-10 space-y-6">
-                <div className="hero-card window-card p-6 md:p-8 lg:p-4">
-<h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-6xl leading-tight">
-    Every business deservesa digital presence that performs, scales,  and  inspires.
-</h1>
-</div>
-
+                    <div className="hero-card window-card p-6 md:p-8">
+                        <h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-7xl leading-tight">
+                            Every business deserves a digital presence that performs, scales, and inspires.
+                        </h1>
+                    </div>
                     <div className="hero-card window-card p-4 md:p-6 ml-0 lg:ml-12 overflow-hidden">
                         <p className="hero-subtext text-lg md:text-xl">
                             At VAR, we don’t just build websites. We craft digital experiences.
@@ -668,89 +700,26 @@ export default function App() {
             </div>
         </section>
         
- <section id="proof" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
-    <div className="max-w-7xl mx-auto">
-        <h2 className="font-headline text-5xl md:text-7xl text-center mb-16">
-            Proof in Every Pixel
-        </h2>
-
-        {/* Proof Point 1: Fast & Scalable (Lime Text -> Magenta Hover) */}
-        <div className="proof-container group hover-magenta grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
-            <div className="proof-card window-card flex flex-col">
-                <div className="window-header"><h3 className="font-ui window-title">01. Fast & Scalable</h3><WindowControls/></div>
-                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
-                    <RocketSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
+        <section id="proof" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
+            <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div className="proof-card window-card">
+                    <div className="window-header"><h3 className="font-ui window-title">🚀 Fast & Scalable</h3><WindowControls/></div>
+                    <div className="p-6 flex justify-center items-center h-48"><RocketSVG className="w-24 h-24 md:w-28 md:h-28 text-gray-800" /></div>
+                </div>
+                <div className="proof-card window-card">
+                    <div className="window-header"><h3 className="font-ui window-title">🔐 Secure by Design</h3><WindowControls/></div>
+                    <div className="p-6 flex justify-center items-center h-48"><LockSVG className="w-24 h-24 md:w-28 md:h-28 text-gray-800" /></div>
+                </div>
+                <div className="proof-card window-card">
+                    <div className="window-header"><h3 className="font-ui window-title">🎨 Modern UI/UX</h3><WindowControls/></div>
+                    <div className="p-6 flex justify-center items-center h-48"><WandSVG className="w-24 h-24 md:w-28 md:h-28 text-gray-800" /></div>
+                </div>
+                <div className="proof-card window-card">
+                    <div className="window-header"><h3 className="font-ui window-title">⚡ Delivered Before Time</h3><WindowControls/></div>
+                    <div className="p-6 flex justify-center items-center h-48"><BoltSVG className="w-24 h-24 md:w-28 md:h-28 text-gray-800" /></div>
                 </div>
             </div>
-            <div className="space-y-4">
-                <h3 className="font-headline text-4xl text-[--accent-lime]">Blazing Performance</h3>
-                <p className="text-lg leading-relaxed">
-                    Ever waited for a website to load forever? Not on our watch. We engineer every solution for lightning-fast delivery and seamless scalability, ensuring your digital presence can handle anything you throw at it, today and tomorrow.
-                </p>
-                <p className="text-2xl font-extralight text-gray-600 font-ui">
-                    Technology stack optimized for speed: React, Next.js, Cloudflare.
-                </p>
-            </div>
-        </div>
-
-        {/* Proof Point 2: Secure by Design (Magenta Text -> Lime Hover) */}
-        <div className="proof-container group hover-lime grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
-            <div className="space-y-4">
-                <h3 className="font-headline text-4xl text-[--accent-magenta]">Fort Knox Security</h3>
-                <p className="text-lg leading-relaxed">
-                    Your data and your users' trust are paramount. Our "secure by design" philosophy means security is baked into every layer of your application, from initial concept to final deployment. Sleep easy knowing you're protected.
-                </p>
-                <p className="text-2xl font-extralight text-gray-600 font-ui">
-                    Regular security audits, robust authentication, and data encryption.
-                </p>
-            </div>
-            <div className="proof-card window-card flex flex-col">
-                <div className="window-header"><h3 className="font-ui window-title">02. Secure by Design</h3><WindowControls/></div>
-                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
-                    <LockSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
-                </div>
-            </div>
-        </div>
-
-        {/* Proof Point 3: Modern UI/UX (Lime Text -> Magenta Hover) */}
-        <div className="proof-container group hover-magenta grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
-            <div className="proof-card window-card flex flex-col">
-                <div className="window-header"><h3 className="font-ui window-title">03. Modern UI/UX</h3><WindowControls/></div>
-                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
-                    <WandSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
-                </div>
-            </div>
-            <div className="space-y-4">
-                <h3 className="font-headline text-4xl text-[--accent-lime]">Intuitive & Beautiful</h3>
-                <p className="text-lg leading-relaxed">
-                    Design isn't just about looks; it's about how it works. We craft interfaces that are a joy to use, intuitive to navigate, and stunning to behold. Elevate your brand with a user experience that captivates and converts.
-                </p>
-                <p className="text-2xl font-extralight text-gray-600 font-ui">
-                    User-centered design principles, accessibility focus, modern aesthetics.
-                </p>
-            </div>
-        </div>
-
-        {/* Proof Point 4: Delivered Before Time (Magenta Text -> Lime Hover) */}
-        <div className="proof-container group hover-lime grid grid-cols-1 md:grid-cols-2 items-center gap-12">
-            <div className="space-y-4">
-                <h3 className="font-headline text-4xl text-[--accent-magenta]">On-Time. Every Time.</h3>
-                <p className="text-lg leading-relaxed">
-                    Deadlines aren't just suggestions; they're commitments. Our streamlined agile processes and dedicated team ensure your project isn't just delivered, but delivered *before* you expect it, without compromising quality.
-                </p>
-                <p className="text-2xl font-extralight text-gray-600 font-ui">
-                    Agile methodologies, clear communication, transparent progress tracking.
-                </p>
-            </div>
-            <div className="proof-card window-card flex flex-col">
-                <div className="window-header"><h3 className="font-ui window-title">04. Delivered Before Time</h3><WindowControls/></div>
-                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
-                    <BoltSVG className="w-32 h-32 md:w-40 md:h-40 md:mb-12 text-gray-800" />
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+        </section>
 
         <section id="pricing" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 items-end">
@@ -822,4 +791,6 @@ export default function App() {
     </>
   );
 }
+
+
 
