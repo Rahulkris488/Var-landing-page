@@ -114,6 +114,75 @@ const GlobalStyles = () => (
         display: inline-block;
         position: relative;
     }
+<<<<<<< HEAD
+        .proof-card {
+  /* Add a subtle halftone pattern to the card background */
+  background-image: radial-gradient(var(--text-primary) 0.5px, transparent 0);
+  background-size: 6px 6px;
+  background-position: 0 0;
+  
+  position: relative; /* Needed for the pseudo-element glow */
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  overflow: hidden; /* Keeps the glow effect contained */
+  z-index: 1;
+  align-self: stretch; /* Makes card fill the grid cell height */
+}
+
+/* Base styles for the ::before pseudo-element used for the glow */
+.proof-card::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200%; /* Make it large to create a soft, wide glow */
+  height: 200%;
+  filter: blur(60px);
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+  z-index: -1;
+}
+
+/* --- DEFINE GRADIENTS FOR EACH COLOR THEME --- */
+
+/* Magenta hover gets a magenta-dominant glow */
+.proof-container.hover-magenta .proof-card::before {
+  background-image: radial-gradient(circle, var(--accent-magenta) 0%, var(--accent-lime) 100%);
+}
+/* Lime hover gets a lime-dominant glow */
+.proof-container.hover-lime .proof-card::before {
+  background-image: radial-gradient(circle, var(--accent-lime) 0%, var(--accent-magenta) 100%);
+}
+
+/* The SVG Icon inside the card */
+.proof-card svg {
+    transition: transform 0.3s ease-out;
+}
+
+/* --- HOVER STATE --- */
+
+/* Generic hover transforms and icon scale for any proof container */
+.proof-container:hover .proof-card {
+  transform: translateY(-8px) rotate(-1.5deg);
+}
+.proof-container:hover .proof-card svg {
+    transform: scale(1.1);
+}
+
+/* Reveal glow on any hover */
+.proof-container:hover .proof-card::before {
+  opacity: 0.15; /* A subtle opacity for the background glow */
+}
+
+/* SPECIFIC hover shadow colors */
+.proof-container.hover-magenta:hover .proof-card {
+  box-shadow: 12px 12px 0px var(--accent-magenta);
+}
+
+.proof-container.hover-lime:hover .proof-card {
+  box-shadow: 12px 12px 0px var(--accent-lime);
+}
+        
+
 
     /* --- FINAL REBUILT BOOK STYLES --- */
     .solution-left {
@@ -235,6 +304,7 @@ const GlobalStyles = () => (
         opacity: 1;
         transform: translateY(0);
     }
+>>>>>>> af153be2047d4a850d39340807f7d79407652e48
   `}</style>
 );
 
@@ -417,6 +487,8 @@ const BookComponent = () => {
 
 
 export default function App() {
+    
+    
   const mainRef = React.useRef(null);
 
   React.useLayoutEffect(() => {
@@ -470,12 +542,24 @@ export default function App() {
           opacity: 0, y: 20, stagger: { amount: 0.5, from: "random" }, duration: 0.8, ease: 'power2.out'
         });
         
-        gsap.to(".philosophy-underline .underline-mask", { 
+
+       gsap.to(".underline-mask", { 
+    width: 200, 
+    ease: "none",
+    scrollTrigger: { 
+        trigger: ".philosophy-punchline", 
+        start: "top center", 
+        end: "bottom center", 
+        scrub: 1 
+    }, 
+});
+      gsap.to(".philosophy-underline .underline-mask", { 
             width: 200, ease: "none",
             scrollTrigger: { 
                 trigger: ".philosophy-punchline", start: "top center", end: "bottom center", scrub: 1 
             }, 
         });
+
 
         gsap.from([".solution-left", ".solution-right"], {
           scrollTrigger: { trigger: "#solution", start: "top 70%", toggleActions: "play none none reverse" },
@@ -543,6 +627,10 @@ export default function App() {
                             Every business deserves a digital presence that performs, scales, and inspires.
                           </h1>
                     </div>
+
+
+
+
                     <div className="hero-card window-card p-4 md:p-6 ml-0 lg:ml-12 overflow-hidden">
                         <p className="hero-subtext text-lg md:text-xl">
                             At VAR, we don’t just build websites. We craft digital experiences.
@@ -613,26 +701,89 @@ export default function App() {
             </div>
         </section>
         
-        <section id="proof" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
-            <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-8">
-                <div className="proof-card window-card">
-                    <div className="window-header"><h3 className="font-ui window-title">🚀 Fast & Scalable</h3><WindowControls/></div>
-                    <div className="p-6 flex justify-center items-center h-48"><RocketSVG className="w-24 h-24 md:w-28 md:h-28 text-gray-800" /></div>
-                </div>
-                <div className="proof-card window-card">
-                    <div className="window-header"><h3 className="font-ui window-title">🔐 Secure by Design</h3><WindowControls/></div>
-                    <div className="p-6 flex justify-center items-center h-48"><LockSVG className="w-24 h-24 md:w-28 md:h-28 text-gray-800" /></div>
-                </div>
-                <div className="proof-card window-card">
-                    <div className="window-header"><h3 className="font-ui window-title">🎨 Modern UI/UX</h3><WindowControls/></div>
-                    <div className="p-6 flex justify-center items-center h-48"><WandSVG className="w-24 h-24 md:w-28 md:h-28 text-gray-800" /></div>
-                </div>
-                <div className="proof-card window-card">
-                    <div className="window-header"><h3 className="font-ui window-title">⚡ Delivered Before Time</h3><WindowControls/></div>
-                    <div className="p-6 flex justify-center items-center h-48"><BoltSVG className="w-24 h-24 md:w-28 md:h-28 text-gray-800" /></div>
+ <section id="proof" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
+    <div className="max-w-7xl mx-auto">
+        <h2 className="font-headline text-5xl md:text-7xl text-center mb-16">
+            Proof in Every Pixel
+        </h2>
+
+        {/* Proof Point 1: Fast & Scalable (Lime Text -> Magenta Hover) */}
+        <div className="proof-container group hover-magenta grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
+            <div className="proof-card window-card flex flex-col">
+                <div className="window-header"><h3 className="font-ui window-title">01. Fast & Scalable</h3><WindowControls/></div>
+                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
+                    <RocketSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
                 </div>
             </div>
-        </section>
+            <div className="space-y-4">
+                <h3 className="font-headline text-4xl text-[--accent-lime]">Blazing Performance</h3>
+                <p className="text-lg leading-relaxed">
+                    Ever waited for a website to load forever? Not on our watch. We engineer every solution for lightning-fast delivery and seamless scalability, ensuring your digital presence can handle anything you throw at it, today and tomorrow.
+                </p>
+                <p className="text-2xl font-extralight text-gray-600 font-ui">
+                    Technology stack optimized for speed: React, Next.js, Cloudflare.
+                </p>
+            </div>
+        </div>
+
+        {/* Proof Point 2: Secure by Design (Magenta Text -> Lime Hover) */}
+        <div className="proof-container group hover-lime grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
+            <div className="space-y-4">
+                <h3 className="font-headline text-4xl text-[--accent-magenta]">Fort Knox Security</h3>
+                <p className="text-lg leading-relaxed">
+                    Your data and your users' trust are paramount. Our "secure by design" philosophy means security is baked into every layer of your application, from initial concept to final deployment. Sleep easy knowing you're protected.
+                </p>
+                <p className="text-2xl font-extralight text-gray-600 font-ui">
+                    Regular security audits, robust authentication, and data encryption.
+                </p>
+            </div>
+            <div className="proof-card window-card flex flex-col">
+                <div className="window-header"><h3 className="font-ui window-title">02. Secure by Design</h3><WindowControls/></div>
+                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
+                    <LockSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
+                </div>
+            </div>
+        </div>
+
+        {/* Proof Point 3: Modern UI/UX (Lime Text -> Magenta Hover) */}
+        <div className="proof-container group hover-magenta grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
+            <div className="proof-card window-card flex flex-col">
+                <div className="window-header"><h3 className="font-ui window-title">03. Modern UI/UX</h3><WindowControls/></div>
+                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
+                    <WandSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
+                </div>
+            </div>
+            <div className="space-y-4">
+                <h3 className="font-headline text-4xl text-[--accent-lime]">Intuitive & Beautiful</h3>
+                <p className="text-lg leading-relaxed">
+                    Design isn't just about looks; it's about how it works. We craft interfaces that are a joy to use, intuitive to navigate, and stunning to behold. Elevate your brand with a user experience that captivates and converts.
+                </p>
+                <p className="text-2xl font-extralight text-gray-600 font-ui">
+                    User-centered design principles, accessibility focus, modern aesthetics.
+                </p>
+            </div>
+        </div>
+
+        {/* Proof Point 4: Delivered Before Time (Magenta Text -> Lime Hover) */}
+        <div className="proof-container group hover-lime grid grid-cols-1 md:grid-cols-2 items-center gap-12">
+            <div className="space-y-4">
+                <h3 className="font-headline text-4xl text-[--accent-magenta]">On-Time. Every Time.</h3>
+                <p className="text-lg leading-relaxed">
+                    Deadlines aren't just suggestions; they're commitments. Our streamlined agile processes and dedicated team ensure your project isn't just delivered, but delivered *before* you expect it, without compromising quality.
+                </p>
+                <p className="text-2xl font-extralight text-gray-600 font-ui">
+                    Agile methodologies, clear communication, transparent progress tracking.
+                </p>
+            </div>
+            <div className="proof-card window-card flex flex-col">
+                <div className="window-header"><h3 className="font-ui window-title">04. Delivered Before Time</h3><WindowControls/></div>
+                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
+                    <BoltSVG className="w-32 h-32 md:w-40 md:h-40 md:mb-12 text-gray-800" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
         <section id="pricing" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 items-end">
