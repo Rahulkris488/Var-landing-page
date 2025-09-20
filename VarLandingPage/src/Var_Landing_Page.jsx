@@ -2,6 +2,7 @@ import React from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
+
 // NOTE: This component is designed to work with GSAP and its plugins loaded globally
 // via <script> tags in your main HTML file. This avoids potential bundling issues
 // and is a reliable method for this setup.
@@ -13,6 +14,8 @@ const GlobalStyles = () => (
       --text-primary: #1A1A1A;
       --accent-lime: #D4FF00;
       --accent-magenta: #FF00DD;
+      --accent-cyan: #00E0FF;
+      --accent-orange: #FF7A00;
     }
     html { scroll-behavior: smooth; }
     body {
@@ -111,6 +114,107 @@ const GlobalStyles = () => (
         display: inline-block;
         position: relative;
     }
+
+    /* --- REBUILT BOOK STYLES --- */
+    .solution-left {
+        perspective: 2500px;
+    }
+
+    .book-container {
+        position: relative;
+        width: 100%;
+        max-width: 380px;
+        height: 450px;
+        margin: 0 auto;
+        transform-style: preserve-3d;
+    }
+
+    .book-cover, .book-page {
+        position: absolute;
+        inset: 0;
+        transform-origin: left center;
+        transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .book-cover {
+        border: 2px solid var(--text-primary);
+        background-color: var(--text-primary);
+        color: var(--bg-primary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 2rem;
+        cursor: pointer;
+    }
+    
+    .book-cover.is-open {
+        transform: rotateY(-180deg);
+    }
+
+    .book-page {
+        inset: 6px 6px 6px 3px; /* Makes cover slightly larger */
+        border: 2px solid var(--text-primary);
+        background-color: var(--bg-primary);
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .book-page.is-turned {
+        transform: rotateY(-180deg);
+    }
+
+    .book-page.is-active {
+        transform: rotateY(0deg); /* No turn on active page */
+    }
+
+    .page-tab {
+        position: absolute;
+        right: -2px; /* To sit flush on the edge */
+        transform: translateX(100%) rotate(90deg) translateY(-100%);
+        transform-origin: top left;
+        padding: 0.75rem 0; /* Vertical padding only */
+        border: 2px solid var(--text-primary);
+        border-bottom: none;
+        color: var(--text-primary);
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 5;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+
+    .book-page:hover .page-tab {
+      background-color: var(--accent-lime) !important;
+    }
+    
+    .book-page:nth-of-type(1) .page-tab { top: 15%; width: 150px; }
+    .book-page:nth-of-type(2) .page-tab { top: 35%; width: 120px; }
+    .book-page:nth-of-type(3) .page-tab { top: 55%; width: 140px; }
+    .book-page:nth-of-type(4) .page-tab { top: 75%; width: 130px; }
+
+    .page-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    
+    .page-description {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.4s ease 0.3s, transform 0.4s ease 0.3s;
+        font-size: 1rem;
+        margin-top: 1rem;
+    }
+
+    .book-page.is-active .page-description {
+        opacity: 1;
+        transform: translateY(0);
+    }
   `}</style>
 );
 
@@ -125,7 +229,7 @@ const Navbar = () => (
         <a href="#pricing" className="nav-link">Pricing</a>
         <a href="#closing" className="nav-link">Contact</a>
       </div>
-       <div className="md:hidden">
+        <div className="md:hidden">
         <svg className="w-8 h-8 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
       </div>
     </div>
@@ -191,6 +295,101 @@ const GridPattern = ({ className }) => (
     </svg>
 );
 
+const services = [
+  {
+    title: "Creative Strategy",
+    headline: "You dream. We design.",
+    description: "Blending creativity with market insights to craft a unique digital identity for your brand.",
+    illustration: <BrainIllustration className="w-24 h-24 mx-auto"/>,
+    color: "var(--accent-magenta)"
+  },
+  {
+    title: "Expert Build",
+    headline: "You plan. We build.",
+    description: "Using cutting-edge tech to build robust, scalable, and high-performing applications.",
+    illustration: <HandIllustration className="w-24 h-24 mx-auto"/>,
+    color: "var(--accent-cyan)"
+  },
+  {
+    title: "Seamless Scaling",
+    headline: "You grow. We scale.",
+    description: "Your digital infrastructure grows with you, ready for tomorrow's challenges and opportunities.",
+    illustration: <RocketIllustration className="w-24 h-24 mx-auto"/>,
+    color: "var(--accent-orange)"
+  },
+  {
+    title: "Ongoing Support",
+    headline: "You rest. We maintain.",
+    description: "Continuous support and proactive maintenance to ensure your platform runs flawlessly.",
+    illustration: <ComputerIllustration className="w-24 h-24 mx-auto"/>,
+    color: "var(--accent-lime)"
+  }
+];
+
+const BookComponent = () => {
+    const [activePageIndex, setActivePageIndex] = React.useState(-1);
+
+    const getPageStyle = (index) => {
+        const isTurned = activePageIndex > -1 && index < activePageIndex;
+        const isActive = index === activePageIndex;
+        
+        let zIndex;
+        if (isActive) {
+            zIndex = 50; 
+        } else if (isTurned) {
+            zIndex = index + 2; 
+        } else {
+            zIndex = services.length - index + 1;
+        }
+        return { zIndex };
+    };
+    
+    return (
+        <div 
+            className="book-container" 
+            onMouseLeave={() => setActivePageIndex(-1)}
+        >
+            <div 
+                className={`book-cover ${activePageIndex > -1 ? 'is-open' : ''}`}
+                style={{ zIndex: activePageIndex > -1 ? 1 : 100 }}
+            >
+                <h3 className="font-headline text-4xl">The Four-Step Symphony of Ours</h3>
+            </div>
+            <div className="book-pages">
+                {services.map((service, index) => {
+                    const isTurned = activePageIndex > -1 && index < activePageIndex;
+                    const isActive = index === activePageIndex;
+                    const pageClasses = `book-page ${isTurned ? 'is-turned' : ''} ${isActive ? 'is-active' : ''}`;
+                    
+                    return (
+                        <div 
+                            key={index} 
+                            className={pageClasses} 
+                            style={getPageStyle(index)}
+                        >
+                            <div 
+                                className="page-tab font-ui" 
+                                style={{ backgroundColor: service.color }}
+                                onMouseEnter={() => setActivePageIndex(index)}
+                            >
+                                {service.title}
+                            </div>
+                            <div className="page-content space-y-4">
+                                {service.illustration}
+                                <h3 className="font-headline text-3xl">{service.headline}</h3>
+                                <p className="page-description font-ui px-4">
+                                    {service.description}
+                                </p>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};
+
+
 export default function App() {
   const mainRef = React.useRef(null);
 
@@ -245,16 +444,27 @@ export default function App() {
           opacity: 0, y: 20, stagger: { amount: 0.5, from: "random" }, duration: 0.8, ease: 'power2.out'
         });
         
-        gsap.to(".underline-mask", { 
+        gsap.to(".philosophy-underline .underline-mask", { 
             width: 200, ease: "none",
             scrollTrigger: { 
                 trigger: ".philosophy-punchline", start: "top center", end: "bottom center", scrub: 1 
             }, 
         });
 
-        gsap.from(".solution-card", {
-            scrollTrigger: { trigger: "#solution", start: "top 75%", toggleActions: "play none none reverse" },
-            opacity: 0, skewX: -10, y: 50, stagger: 0.15, duration: 0.8, ease: "power3.out"
+        gsap.from([".solution-left", ".solution-right"], {
+          scrollTrigger: { trigger: "#solution", start: "top 70%", toggleActions: "play none none reverse" },
+          opacity: 0,
+          y: 60,
+          duration: 1.2,
+          ease: "power3.out",
+          stagger: 0.2
+        });
+        
+        gsap.to(".solution-underline .underline-mask", {
+            width: 200, ease: "none",
+            scrollTrigger: {
+                trigger: ".solution-right", start: "top center", end: "bottom center", scrub: 1.5
+            }
         });
 
         gsap.from(".proof-card svg", {
@@ -303,9 +513,9 @@ export default function App() {
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-7xl mx-auto">
                 <div className="relative z-10 space-y-6">
                     <div className="hero-card window-card p-6 md:p-8">
-                         <h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-7xl leading-tight">
+                          <h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-7xl leading-tight">
                             Every business deserves a digital presence that performs, scales, and inspires.
-                        </h1>
+                          </h1>
                     </div>
                     <div className="hero-card window-card p-4 md:p-6 ml-0 lg:ml-12 overflow-hidden">
                         <p className="hero-subtext text-lg md:text-xl">
@@ -349,42 +559,31 @@ export default function App() {
                     <h2 className="philosophy-punchline font-headline text-5xl md:text-7xl lg:text-9xl">
                         Here at VAR, we don’t believe in balance — we believe in excellence.
                     </h2>
-                    <ExcellenceUnderline className="excellence-underline absolute -bottom-2 md:-bottom-4 left-0 w-full h-auto"/>
+                    <ExcellenceUnderline className="philosophy-underline absolute -bottom-2 md:-bottom-4 left-0 w-full h-auto"/>
                  </div>
             </div>
         </section>
 
         <section id="solution" className="relative py-20 md:py-32 px-4 sm:px-6 md:px-8 overflow-hidden">
             <GridPattern className="absolute top-1/4 -left-20 opacity-20 deco-grid" />
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8 relative z-10">
-                <div className="solution-card window-card">
-                    <div className="window-header"><span className="font-ui window-title">service_01.exe</span><WindowControls/></div>
-                    <div className="p-6 space-y-4 text-center">
-                         <BrainIllustration className="w-24 h-24 sm:w-28 sm:h-28 mx-auto"/>
-                         <h3 className="font-headline text-2xl">You dream. We design.</h3>
-                    </div>
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+                
+                <div className="solution-left flex items-center justify-center lg:min-h-[450px]">
+                    <BookComponent />
                 </div>
-                <div className="solution-card window-card">
-                    <div className="window-header"><span className="font-ui window-title">service_02.exe</span><WindowControls/></div>
-                    <div className="p-6 space-y-4 text-center">
-                         <HandIllustration className="w-24 h-24 sm:w-28 sm:h-28 mx-auto"/>
-                         <h3 className="font-headline text-2xl">You plan. We build.</h3>
-                    </div>
+
+                <div className="solution-right space-y-6">
+                     <h2 className="font-headline text-4xl md:text-5xl lg:text-6xl">A Four-Step Symphony of Creation</h2>
+                     <p className="text-lg md:text-xl lg:text-2xl leading-relaxed">
+                        We transform your vision into a digital masterpiece. Our process is a fusion of creative strategy and technical precision, ensuring every pixel and line of code serves a purpose. It's a true&nbsp;
+                        <span className="relative inline-block font-headline text-lime-500/50" style={{'--accent-lime': '#FF00DD'}}>
+                            synergy
+                            <ExcellenceUnderline className="solution-underline absolute -bottom-1 md:-bottom-2 left-0 w-full h-auto"/>
+                        </span>
+                        &nbsp;between your goals and our expertise, resulting in a product that's not just built, but thoughtfully engineered for success.
+                     </p>
                 </div>
-                <div className="solution-card window-card">
-                    <div className="window-header"><span className="font-ui window-title">service_03.exe</span><WindowControls/></div>
-                    <div className="p-6 space-y-4 text-center">
-                         <RocketIllustration className="w-24 h-24 sm:w-28 sm:h-28 mx-auto"/>
-                         <h3 className="font-headline text-2xl">You grow. We scale.</h3>
-                    </div>
-                </div>
-                <div className="solution-card window-card">
-                    <div className="window-header"><span className="font-ui window-title">service_04.exe</span><WindowControls/></div>
-                    <div className="p-6 space-y-4 text-center">
-                         <ComputerIllustration className="w-24 h-24 sm:w-28 sm:h-28 mx-auto"/>
-                         <h3 className="font-headline text-2xl">You rest. We maintain.</h3>
-                    </div>
-                </div>
+
             </div>
         </section>
         
