@@ -114,75 +114,6 @@ const GlobalStyles = () => (
         display: inline-block;
         position: relative;
     }
-<<<<<<< HEAD
-        .proof-card {
-  /* Add a subtle halftone pattern to the card background */
-  background-image: radial-gradient(var(--text-primary) 0.5px, transparent 0);
-  background-size: 6px 6px;
-  background-position: 0 0;
-  
-  position: relative; /* Needed for the pseudo-element glow */
-  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
-  overflow: hidden; /* Keeps the glow effect contained */
-  z-index: 1;
-  align-self: stretch; /* Makes card fill the grid cell height */
-}
-
-/* Base styles for the ::before pseudo-element used for the glow */
-.proof-card::before {
-  content: '';
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200%; /* Make it large to create a soft, wide glow */
-  height: 200%;
-  filter: blur(60px);
-  opacity: 0;
-  transition: opacity 0.4s ease-in-out;
-  z-index: -1;
-}
-
-/* --- DEFINE GRADIENTS FOR EACH COLOR THEME --- */
-
-/* Magenta hover gets a magenta-dominant glow */
-.proof-container.hover-magenta .proof-card::before {
-  background-image: radial-gradient(circle, var(--accent-magenta) 0%, var(--accent-lime) 100%);
-}
-/* Lime hover gets a lime-dominant glow */
-.proof-container.hover-lime .proof-card::before {
-  background-image: radial-gradient(circle, var(--accent-lime) 0%, var(--accent-magenta) 100%);
-}
-
-/* The SVG Icon inside the card */
-.proof-card svg {
-    transition: transform 0.3s ease-out;
-}
-
-/* --- HOVER STATE --- */
-
-/* Generic hover transforms and icon scale for any proof container */
-.proof-container:hover .proof-card {
-  transform: translateY(-8px) rotate(-1.5deg);
-}
-.proof-container:hover .proof-card svg {
-    transform: scale(1.1);
-}
-
-/* Reveal glow on any hover */
-.proof-container:hover .proof-card::before {
-  opacity: 0.15; /* A subtle opacity for the background glow */
-}
-
-/* SPECIFIC hover shadow colors */
-.proof-container.hover-magenta:hover .proof-card {
-  box-shadow: 12px 12px 0px var(--accent-magenta);
-}
-
-.proof-container.hover-lime:hover .proof-card {
-  box-shadow: 12px 12px 0px var(--accent-lime);
-}
-        
-=======
 
     /* --- REBUILT BOOK STYLES --- */
     .solution-left {
@@ -284,7 +215,6 @@ const GlobalStyles = () => (
         opacity: 1;
         transform: translateY(0);
     }
->>>>>>> af153be2047d4a850d39340807f7d79407652e48
   `}</style>
 );
 
@@ -522,7 +452,6 @@ export default function App() {
           opacity: 0, y: 20, stagger: { amount: 0.5, from: "random" }, duration: 0.8, ease: 'power2.out'
         });
         
-<<<<<<< HEAD
        gsap.to(".underline-mask", { 
     width: 200, 
     ease: "none",
@@ -533,14 +462,6 @@ export default function App() {
         scrub: 1 
     }, 
 });
-=======
-        gsap.to(".philosophy-underline .underline-mask", { 
-            width: 200, ease: "none",
-            scrollTrigger: { 
-                trigger: ".philosophy-punchline", start: "top center", end: "bottom center", scrub: 1 
-            }, 
-        });
->>>>>>> af153be2047d4a850d39340807f7d79407652e48
 
         gsap.from([".solution-left", ".solution-right"], {
           scrollTrigger: { trigger: "#solution", start: "top 70%", toggleActions: "play none none reverse" },
@@ -603,11 +524,7 @@ export default function App() {
            <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-7xl mx-auto -mt-24">
                 <div className="relative z-10 space-y-6">
 
-                    <div className="hero-card window-card p-6 md:p-8">
-                          <h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-7xl leading-tight">
-                            Every business deserves a digital presence that performs, scales, and inspires.
-                          </h1>
-                    </div>
+                    
 
                 <div className="hero-card window-card p-6 md:p-8 lg:p-4">
 <h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-6xl leading-tight">
