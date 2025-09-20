@@ -622,11 +622,12 @@ export default function App() {
             <div className="absolute inset-0 halftone-bg opacity-30"></div>
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-7xl mx-auto">
                 <div className="relative z-10 space-y-6">
-                    <div className="hero-card window-card p-6 md:p-8">
-                          <h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-7xl leading-tight">
-                            Every business deserves a digital presence that performs, scales, and inspires.
-                          </h1>
-                    </div>
+                                    <div className="hero-card window-card p-6 md:p-8 lg:p-4">
+<h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-6xl leading-tight">
+    Every business deservesa digital presence that performs, scales,  and  inspires.
+</h1>
+</div>
+
 
 
 
