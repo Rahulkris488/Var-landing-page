@@ -9,6 +9,7 @@ import { TextPlugin } from 'gsap/TextPlugin';
 
 const GlobalStyles = () => (
   <style>{`
+    
     :root {
       --bg-primary: #F7F5F0;
       --text-primary: #1A1A1A;
@@ -114,8 +115,84 @@ const GlobalStyles = () => (
         display: inline-block;
         position: relative;
     }
+<<<<<<< HEAD
 
     /* --- FINAL REBUILT BOOK STYLES --- */
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+        .proof-card {
+  /* Add a subtle halftone pattern to the card background */
+  background-image: radial-gradient(var(--text-primary) 0.5px, transparent 0);
+  background-size: 6px 6px;
+  background-position: 0 0;
+  
+  position: relative; /* Needed for the pseudo-element glow */
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  overflow: hidden; /* Keeps the glow effect contained */
+  z-index: 1;
+  align-self: stretch; /* Makes card fill the grid cell height */
+}
+
+/* Base styles for the ::before pseudo-element used for the glow */
+.proof-card::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200%; /* Make it large to create a soft, wide glow */
+  height: 200%;
+  filter: blur(60px);
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+  z-index: -1;
+}
+
+/* --- DEFINE GRADIENTS FOR EACH COLOR THEME --- */
+
+/* Magenta hover gets a magenta-dominant glow */
+.proof-container.hover-magenta .proof-card::before {
+  background-image: radial-gradient(circle, var(--accent-magenta) 0%, var(--accent-lime) 100%);
+}
+/* Lime hover gets a lime-dominant glow */
+.proof-container.hover-lime .proof-card::before {
+  background-image: radial-gradient(circle, var(--accent-lime) 0%, var(--accent-magenta) 100%);
+}
+
+/* The SVG Icon inside the card */
+.proof-card svg {
+    transition: transform 0.3s ease-out;
+}
+
+/* --- HOVER STATE --- */
+
+/* Generic hover transforms and icon scale for any proof container */
+.proof-container:hover .proof-card {
+  transform: translateY(-8px) rotate(-1.5deg);
+}
+.proof-container:hover .proof-card svg {
+    transform: scale(1.1);
+}
+
+/* Reveal glow on any hover */
+.proof-container:hover .proof-card::before {
+  opacity: 0.15; /* A subtle opacity for the background glow */
+}
+
+/* SPECIFIC hover shadow colors */
+.proof-container.hover-magenta:hover .proof-card {
+  box-shadow: 12px 12px 0px var(--accent-magenta);
+}
+
+.proof-container.hover-lime:hover .proof-card {
+  box-shadow: 12px 12px 0px var(--accent-lime);
+}
+        
+>>>>>>> 11a9667f5611456c74228b846ce49a9d77d0de0c
+
+    /* --- REBUILT BOOK STYLES --- */
+>>>>>>> 700ee2f73825707f370771918ab21eeedcb0f5c5
     .solution-left {
         /* A smaller perspective value makes the 3D effect more pronounced */
         perspective: 1800px;
@@ -237,6 +314,44 @@ const GlobalStyles = () => (
         opacity: 1;
         transform: translateY(0);
     }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+        .footer-link {
+    position: relative;
+    transition: color 0.3s ease;
+}
+.footer-link:hover {
+    color: var(--accent-magenta);
+}
+.footer-link::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: var(--accent-magenta);
+    bottom: -2px;
+    left: 0;
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.3s ease-out;
+}
+.footer-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+.social-icon {
+    transition: transform 0.2s ease-out, color 0.2s ease-out;
+}
+.social-icon:hover {
+    transform: translateY(-3px);
+    color: var(--accent-lime);
+}
+=======
+
+>>>>>>> 11a9667f5611456c74228b846ce49a9d77d0de0c
+>>>>>>> 700ee2f73825707f370771918ab21eeedcb0f5c5
   `}</style>
 );
 
@@ -504,6 +619,20 @@ const BookComponent = () => {
 
 
 export default function App() {
+
+    
+    const XIcon = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.931L18.901 1.153zm-1.613 19.59h2.546L4.109 2.542H1.465l15.823 18.201z"/>
+    </svg>
+);
+
+const LinkedInIcon = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.25 6.5 1.75 1.75 0 016.5 8.25zM19 19h-3v-4.75c0-1.4-1.2-2.5-2.5-2.5S11 12.85 11 14.25V19h-3v-9h2.9v1.3a3.11 3.11 0 012.6-1.4c2.5 0 4.5 2.2 4.5 5.1V19z"/>
+    </svg>
+);
+
   const mainRef = React.useRef(null);
 
   React.useLayoutEffect(() => {
@@ -761,31 +890,63 @@ export default function App() {
         </section>
         
         <footer id="footer" className="py-16 px-4 md:px-8">
-            <div className="max-w-7xl mx-auto pt-10 dashed-line">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-                     <div>
-                        <h4 className="font-headline text-xl mb-2">Navigate</h4>
-                        <a href="#hero" className="block font-ui hover:text-[--accent-magenta]">Home</a>
-                        <a href="#philosophy" className="block font-ui hover:text-[--accent-magenta]">About</a>
-                        <a href="#solution" className="block font-ui hover:text-[--accent-magenta]">Services</a>
-                        <a href="#pricing" className="block font-ui hover:text-[--accent-magenta]">Pricing</a>
-                    </div>
-                     <div>
-                        <h4 className="font-headline text-xl mb-2">Contact</h4>
-                         <a href="mailto:hello@var.agency" className="font-ui hover:text-[--accent-magenta]">hello@var.agency</a>
-                    </div>
-                    <div>
-                        <h4 className="font-headline text-xl mb-2">Follow</h4>
-                        <div className="flex space-x-4 justify-center md:justify-start">
-                           <p className="font-ui">X / LinkedIn</p>
-                        </div>
-                    </div>
-                </div>
-                 <div className="text-center font-ui text-sm mt-12 pt-8 border-t-2 border-dashed border-[--text-primary]">
-                    © {new Date().getFullYear()} VAR Agency. All Rights Reserved.
-                </div>
+    <div className="max-w-7xl mx-auto">
+        
+        {/* Top Branding & Divider */}
+        <div className="text-center mb-12">
+             <a href="#hero" className="font-headline text-5xl text-black">VAR</a>
+        </div>
+
+        {/* Footer Links Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-y-10 gap-x-8 text-center md:text-left">
+            
+            {/* Navigate Column */}
+            <div>
+                <h4 className="font-ui text-2xl mb-4 text-black">Navigate</h4>
+                <ul className="space-y-3">
+                    <li><a href="#hero" className="font-ui text-lg footer-link">Home</a></li>
+                    <li><a href="#philosophy" className="font-ui text-lg footer-link">About</a></li>
+                    <li><a href="#solution" className="font-ui text-lg footer-link">Services</a></li>
+                    <li><a href="#pricing" className="font-ui text-lg footer-link">Pricing</a></li>
+                </ul>
             </div>
-        </footer>
+            
+            {/* Connect Column */}
+            <div>
+                <h4 className="font-ui text-2xl mb-4 text-black">Connect</h4>
+                <ul className="space-y-3">
+                    <li>
+                        <a href="mailto:hello@var.agency" className="font-ui text-lg footer-link">hello@var.agency</a>
+                    </li>
+                    {/* Social Links */}
+                    <li className="flex items-center space-x-5 mt-4 justify-center md:justify-start">
+                        <a href="#" className="social-icon">
+                            <XIcon className="w-6 h-6"/>
+                        </a>
+                        <a href="#" className="social-icon">
+                            <LinkedInIcon className="w-6 h-6"/>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            {/* Legal Column */}
+            <div>
+                <h4 className="font-ui text-2xl mb-4 text-black">Legal</h4>
+                <ul className="space-y-3">
+                    <li><a href="#" className="font-ui text-lg footer-link">Privacy Policy</a></li>
+                    <li><a href="#" className="font-ui text-lg footer-link">Terms of Service</a></li>
+                </ul>
+            </div>
+
+        </div>
+        
+        {/* Copyright */}
+        <div className="text-center font-ui text-base text-[--text-primary] opacity-80 mt-16 pt-8 border-t border-solid border-[--text-primary]/30">
+            © {new Date().getFullYear()} VAR Agency. All Rights Reserved.
+        </div>
+    </div>
+</footer>
 
       </main>
     </>
