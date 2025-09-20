@@ -115,7 +115,7 @@ const GlobalStyles = () => (
         position: relative;
     }
 
-    /* --- REBUILT BOOK STYLES --- */
+    /* --- FINAL REBUILT BOOK STYLES --- */
     .solution-left {
         perspective: 2500px;
     }
@@ -134,9 +134,19 @@ const GlobalStyles = () => (
         inset: 0;
         transform-origin: left center;
         transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+        transform-style: preserve-3d; /* This is crucial */
     }
 
+    .book-face {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+    }
+    
     .book-cover {
+        cursor: pointer;
+    }
+    .book-cover .book-face--front {
         border: 2px solid var(--text-primary);
         background-color: var(--text-primary);
         color: var(--bg-primary);
@@ -145,18 +155,28 @@ const GlobalStyles = () => (
         align-items: center;
         text-align: center;
         padding: 2rem;
-        cursor: pointer;
     }
-    
+    .book-cover .book-face--back {
+        border: 2px solid var(--text-primary);
+        background-color: #333; /* Dark back for the cover */
+        transform: rotateY(180deg);
+    }
+
     .book-cover.is-open {
         transform: rotateY(-180deg);
     }
 
     .book-page {
         inset: 6px 6px 6px 3px; /* Makes cover slightly larger */
+    }
+    .book-page .book-face--front {
         border: 2px solid var(--text-primary);
         background-color: var(--bg-primary);
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+    .book-page .book-face--back {
+        border: 2px solid var(--text-primary);
+        background-color: #F0EDE5; /* Slightly different back page color */
+        transform: rotateY(180deg);
     }
 
     .book-page.is-turned {
@@ -164,15 +184,15 @@ const GlobalStyles = () => (
     }
 
     .book-page.is-active {
-        transform: rotateY(0deg); /* No turn on active page */
+        transform: rotateY(0deg); /* Active page is perfectly still */
     }
 
     .page-tab {
         position: absolute;
-        right: -2px; /* To sit flush on the edge */
+        right: -2px;
         transform: translateX(100%) rotate(90deg) translateY(-100%);
         transform-origin: top left;
-        padding: 0.75rem 0; /* Vertical padding only */
+        padding: 0.75rem 0;
         border: 2px solid var(--text-primary);
         border-bottom: none;
         color: var(--text-primary);
@@ -246,7 +266,6 @@ const WindowControls = () => (
 
 const VarBotWaving = ({ className }) => (
     <svg className={className} viewBox="0 0 150 200" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 4, fill: "none", stroke: "var(--text-primary)"}}>
-        {/* Head and Body */}
         <rect x="35" y="20" width="80" height="60" fill="var(--bg-primary)"/>
         <path d="M75,20 V10 H65 V5 h20 v5 H75"/>
         <circle className="bot-eye" cx="60" cy="50" r="8" fill="var(--text-primary)"/>
@@ -254,18 +273,12 @@ const VarBotWaving = ({ className }) => (
         <circle className="bot-eye" cx="90" cy="50" r="8" fill="var(--text-primary)"/>
         <path d="M82,50 v-8" stroke="var(--bg-primary)" strokeWidth="2"/>
         <rect x="45" y="80" width="60" height="70" fill="var(--bg-primary)"/>
-        
-        {/* Left arm: Waving up with the ball attached */}
         <g className="bot-waving-arm">
-            <path d="M45,95 C 20,80 25,50 45,60" />
-            <path d="M45,60 m -10, 0 a 10,10 0 1,0 20,0 a 10,10 0 1,0 -20,0" fill="var(--bg-primary)"/>
+            <path d="M35,95 C 10,80 -10,100 20,60 Q 30 40, 50 50"/>
+            <path d="M15,65 m -10, 0 a 10,10 0 1,0 20,0 a 10,10 0 1,0 -20,0" fill="var(--bg-primary)"/>
         </g>
-        
-        {/* Right arm: Kept in its original style */}
         <path d="M115,95 C 130,100 135,120 120,130" />
         <path d="M120,135 m -10, 0 a 10,10 0 1,0 20,0 a 10,10 0 1,0 -20,0" fill="var(--bg-primary)"/>
-        
-        {/* Legs */}
         <path d="M60,150 C 50,170 40,190 50,200"/>
         <path d="M90,150 C 100,170 110,190 100,200"/>
     </svg>
@@ -279,6 +292,7 @@ const RocketSVG = ({ className }) => ( <svg className={className} viewBox="0 0 2
 const LockSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect> <path d="M7 11V7a5 5 0 0110 0v4"></path> </svg> );
 const WandSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="M15 4l6 6m-9-3l-6 6l9 9l6-6l-9-9z"></path> <path d="M9 21l-6-6"></path> <path d="M21 3L12 12"></path> </svg> );
 const BoltSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon> </svg> );
+
 const ExcellenceUnderline = ({ className }) => (
     <svg className={className} viewBox="0 0 200 20" preserveAspectRatio="none">
         <defs>
@@ -359,7 +373,10 @@ const BookComponent = () => {
                 className={`book-cover ${activePageIndex > -1 ? 'is-open' : ''}`}
                 style={{ zIndex: activePageIndex > -1 ? 1 : 100 }}
             >
-                <h3 className="font-headline text-4xl">The Four-Step Symphony of Ours</h3>
+                <div className="book-face book-face--front">
+                     <h3 className="font-headline text-4xl">The Four-Step Symphony of Ours</h3>
+                </div>
+                <div className="book-face book-face--back"></div>
             </div>
             <div className="book-pages">
                 {services.map((service, index) => {
@@ -373,20 +390,23 @@ const BookComponent = () => {
                             className={pageClasses} 
                             style={getPageStyle(index)}
                         >
-                            <div 
-                                className="page-tab font-ui" 
-                                style={{ backgroundColor: service.color }}
-                                onMouseEnter={() => setActivePageIndex(index)}
-                            >
-                                {service.title}
+                           <div className="book-face book-face--front">
+                                <div 
+                                    className="page-tab font-ui" 
+                                    style={{ backgroundColor: service.color }}
+                                    onMouseEnter={() => setActivePageIndex(index)}
+                                >
+                                    {service.title}
+                                </div>
+                                <div className="page-content space-y-4">
+                                    {service.illustration}
+                                    <h3 className="font-headline text-3xl">{service.headline}</h3>
+                                    <p className="page-description font-ui px-4">
+                                        {service.description}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="page-content space-y-4">
-                                {service.illustration}
-                                <h3 className="font-headline text-3xl">{service.headline}</h3>
-                                <p className="page-description font-ui px-4">
-                                    {service.description}
-                                </p>
-                            </div>
+                           <div className="book-face book-face--back"></div>
                         </div>
                     );
                 })}
@@ -514,22 +534,15 @@ export default function App() {
       <div className="paper-texture"></div>
       <main ref={mainRef} className="bg-[--bg-primary] text-[--text-primary] font-['Inter'] selection:bg-[--accent-lime] selection:text-[--text-primary]">
         
-<section id="hero" className="relative min-h-screen w-full mt-16 flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">            <div className="absolute inset-0 halftone-bg opacity-30"></div>
-           <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-7xl mx-auto -mt-24">
+        <section id="hero" className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">
+            <div className="absolute inset-0 halftone-bg opacity-30"></div>
+            <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-7xl mx-auto">
                 <div className="relative z-10 space-y-6">
-
                     <div className="hero-card window-card p-6 md:p-8">
                           <h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-7xl leading-tight">
                             Every business deserves a digital presence that performs, scales, and inspires.
                           </h1>
                     </div>
-
-                <div className="hero-card window-card p-6 md:p-8 lg:p-4">
-<h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-6xl leading-tight">
-    Every business deserves a digital presence that performs, scales, and inspires.
-</h1>
-</div>
-
                     <div className="hero-card window-card p-4 md:p-6 ml-0 lg:ml-12 overflow-hidden">
                         <p className="hero-subtext text-lg md:text-xl">
                             At VAR, we don’t just build websites. We craft digital experiences.
