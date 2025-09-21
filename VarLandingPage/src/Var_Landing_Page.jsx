@@ -1,7 +1,10 @@
 import React from 'react';
+
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { TextPlugin } from 'gsap/TextPlugin';
+import { ScrollTrigger } from 'gsap/dist/ScrollTrigger.js'; // Note the .js extension
+import { TextPlugin } from 'gsap/dist/TextPlugin.js'; // Note the .js extension
+
+gsap.registerPlugin(ScrollTrigger, TextPlugin);
 // NOTE: This component is designed to work with GSAP and its plugins loaded globally
 // via <script> tags in your main HTML file. This avoids potential bundling issues
 // and is a reliable method for this setup.
@@ -10,7 +13,7 @@ const GlobalStyles = () => (
     @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
     :root {
       --bg-primary: #F7F5F0;
-      --text-primary: #1A1A1A;
+      --text-primary: #1A1A1A; 
       --accent-lime: #D4FF00;
       --accent-magenta: #FF00DD;
       --accent-cyan: #00E0FF;
