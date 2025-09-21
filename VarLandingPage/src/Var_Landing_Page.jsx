@@ -22,14 +22,12 @@ const GlobalStyles = () => (
       color: var(--text-primary);
       overflow-x: hidden;
     }
-    .font-headline {
-      font-family: 'Anton', sans-serif;
-      text-transform: uppercase;
-      -webkit-text-stroke: 1px var(--text-primary);
-      text-stroke: 1px var(--text-primary);
-      word-break: break-word;
-      hyphens: auto;
-    }
+   .font-headline {
+  font-family: 'Anton', sans-serif;
+  text-transform: uppercase;
+  -webkit-text-stroke: 1px var(--text-primary);
+  text-stroke: 1px var(--text-primary);
+}
     .font-ui { font-family: 'VT323', monospace; }
     .font-signature {
       font-family: 'Caveat', cursive;
@@ -632,7 +630,7 @@ const LinkedInIcon = ({ className }) => (
 );
   const mainRef = React.useRef(null);
 
-  React.useLayoutEffect(() => {
+React.useLayoutEffect(() => {
     const gsap = window.gsap;
     const ScrollTrigger = window.ScrollTrigger;
     const TextPlugin = window.TextPlugin;
@@ -643,25 +641,33 @@ const LinkedInIcon = ({ className }) => (
     }
 
     gsap.registerPlugin(ScrollTrigger, TextPlugin);
-
-    const splitText = (selector) => {
-        const element = mainRef.current.querySelector(selector);
-        if (element) {
-            const text = element.textContent.trim();
-            element.innerHTML = text.split('').map(char => `<span class="split-text-char">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
-            return element.querySelectorAll('.split-text-char');
-        }
-        return [];
-    };
+    
+    // NOTE: The old splitText function is removed as we now handle it directly below.
 
     const ctx = gsap.context(() => {
         gsap.from("header", { y: -100, opacity: 0, duration: 1, ease: 'power3.out', delay: 0.5 });
         
-        const heroChars = splitText(".hero-headline");
-        gsap.from(heroChars, {
+        // --- START OF UPDATED HERO ANIMATION LOGIC ---
+        const heroLines = mainRef.current.querySelectorAll(".headline-line");
+        
+        heroLines.forEach(line => {
+            const text = line.textContent.trim();
+            line.innerHTML = ''; // Clear the line
+            text.split('').forEach(char => {
+                const span = document.createElement('span');
+                span.className = 'split-text-char';
+                span.innerHTML = char === ' ' ? '&nbsp;' : char;
+                span.style.display = 'inline-block'; // Important for transforms
+                line.appendChild(span);
+            });
+        });
+        
+        const allChars = mainRef.current.querySelectorAll('.split-text-char');
+        gsap.from(allChars, {
             opacity: 0, y: 50, rotateX: -90, stagger: 0.02,
             duration: 1, ease: 'power3.out', delay: 1,
         });
+        // --- END OF UPDATED HERO ANIMATION LOGIC ---
         
         gsap.from(".hero-subtext", { y: '100%', opacity: 0, duration: 1, ease: 'power3.out', delay: 1.5 });
         gsap.from(".hero-cta", { opacity: 0, scale: 0.8, duration: 1, ease: 'elastic.out(1, 0.75)', delay: 2 });
@@ -676,23 +682,31 @@ const LinkedInIcon = ({ className }) => (
           .to("#terminal-text-2", { duration: 1.5, text: "Slow apps lose customers.", ease: "none" })
           .to("#terminal-text-3", { duration: 2, text: "Poor design loses opportunities.", ease: "none" })
           .fromTo("#terminal-cursor", { autoAlpha: 0 }, { autoAlpha: 1, repeat: -1, yoyo: true, duration: 0.5 }, "-=2");
+        
+        // The rest of your animations remain the same...
+        const philosophyLines = mainRef.current.querySelectorAll(".philosophy-line");
+        const philosophyChars = [];
+        philosophyLines.forEach(line => {
+             const text = line.textContent.trim();
+             line.innerHTML = text.split('').map(char => `<span class="split-text-char" style="display:inline-block;">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
+             philosophyChars.push(...line.children);
+        });
 
-        const philosophyChars = splitText(".philosophy-line");
         gsap.from(philosophyChars, {
           scrollTrigger: { trigger: "#philosophy", start: "top 70%" }, 
           opacity: 0, y: 20, stagger: { amount: 0.5, from: "random" }, duration: 0.8, ease: 'power2.out'
         });
         
        gsap.to(".underline-mask", { 
-        width: 200, 
-        ease: "none",
-        scrollTrigger: { 
-            trigger: ".philosophy-punchline", 
-            start: "top center", 
-            end: "bottom center", 
-            scrub: 1 
-        }, 
-    });
+         width: 200, 
+         ease: "none",
+         scrollTrigger: { 
+             trigger: ".philosophy-punchline", 
+             start: "top center", 
+             end: "bottom center", 
+             scrub: 1 
+         }, 
+     });
 
         gsap.from([".solution-left", ".solution-right"], {
           scrollTrigger: { trigger: "#solution", start: "top 70%", toggleActions: "play none none reverse" },
@@ -715,8 +729,15 @@ const LinkedInIcon = ({ className }) => (
             scrollTrigger: { trigger: "#pricing", start: "top 70%", toggleActions: "play none none reverse" },
             opacity: 0, filter: 'blur(10px)', stagger: 0.2, duration: 1, ease: 'power2.out'
         });
+        
+        const closingLines = mainRef.current.querySelectorAll(".closing-headline");
+        const closingChars = [];
+        closingLines.forEach(line => {
+             const text = line.textContent.trim();
+             line.innerHTML = text.split('').map(char => `<span class="split-text-char" style="display:inline-block;">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
+             closingChars.push(...line.children);
+        });
 
-        const closingChars = splitText(".closing-headline");
         gsap.from(closingChars, {
             opacity: 0, scaleY: 0, y: -50, transformOrigin: "top", stagger: 0.03,
             duration: 0.8, ease: 'power3.out',
@@ -730,7 +751,6 @@ const LinkedInIcon = ({ className }) => (
             }
         });
         
-        // Animations for About Us section
         gsap.from(".about-us-headline", {
             scrollTrigger: { trigger: "#about-us", start: "top 80%" },
             opacity: 0, y: 50, duration: 1, ease: 'power3.out'
@@ -745,7 +765,6 @@ const LinkedInIcon = ({ className }) => (
             scrollTrigger: { trigger: ".founder-card", start: "top 85%" },
             opacity: 0, scale: 0.5, rotation: -45, duration: 1, ease: 'elastic.out(1, 0.75)', delay: 0.5
         });
-
 
     }, mainRef);
 
@@ -763,10 +782,15 @@ const LinkedInIcon = ({ className }) => (
     <div className="absolute inset-0 halftone-bg opacity-30"></div>
     <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center max-w-7xl mx-auto mt-16 lg:mt-0">
         <div className="relative z-10 space-y-6 text-center lg:text-left">
-            <div className="hero-card window-card p-6 md:p-8">
-                <h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-6xl leading-snug">
-                    Every business deserves a digital presence that performs, scales, and inspires.
-                </h1>
+            <div className="hero-card window-card p-6 md:p-8 mt-16">
+            
+<h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-6xl leading-tight ">
+    <span className="block headline-line">Every business</span>
+    <span className="block headline-line">deserves a digital</span>
+    <span className="block headline-line">presence that</span>
+    <span className="block headline-line">performs, scales,</span>
+    <span className="block headline-line">and inspires.</span>
+</h1>
             </div>
             <div className="hero-card window-card p-4 md:p-6 lg:ml-12 overflow-hidden">
                 <p className="hero-subtext text-lg md:text-xl">
@@ -954,7 +978,7 @@ const LinkedInIcon = ({ className }) => (
         </section>
 
         <section id="closing" className="min-h-screen bg-[--text-primary] text-[--bg-primary] flex flex-col justify-center items-center text-center p-4 md:p-8">
-            <h2 className="closing-headline font-headline text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-[--bg-primary] leading-snug">Your vision. Our code. Together, we build the future.</h2>
+            <h2 className="closing-headline font-headline text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-[--bg-primary] leading-snug">Your vision. Our code. Together,we    build the future.</h2>
              <div className="mt-12">
                  <a href="https://var-contact-us.vercel.app/" target="_blank" rel="noopener noreferrer" className="press-effect bg-[--accent-lime] text-[--text-primary] font-ui text-2xl sm:text-3xl p-4 sm:p-6 hover:bg-[--bg-primary] hover:text-[--accent-lime] inline-block">
                     <span className="btn-arrow-icon mr-2">→</span> Let’s Talk
