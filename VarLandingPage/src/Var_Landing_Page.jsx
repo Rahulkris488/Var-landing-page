@@ -2,14 +2,12 @@ import React from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
-
-
 // NOTE: This component is designed to work with GSAP and its plugins loaded globally
 // via <script> tags in your main HTML file. This avoids potential bundling issues
 // and is a reliable method for this setup.
-
 const GlobalStyles = () => (
  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
     :root {
       --bg-primary: #F7F5F0;
       --text-primary: #1A1A1A;
@@ -29,8 +27,13 @@ const GlobalStyles = () => (
       text-transform: uppercase;
       -webkit-text-stroke: 1px var(--text-primary);
       text-stroke: 1px var(--text-primary);
+      word-break: break-word;
+      hyphens: auto;
     }
     .font-ui { font-family: 'VT323', monospace; }
+    .font-signature {
+      font-family: 'Caveat', cursive;
+    }
     .paper-texture {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       width: 100%; height: 100%;
@@ -117,17 +120,16 @@ const GlobalStyles = () => (
       position: relative;
     }
 
-    /* --- PROOF CARD STYLES (FIXED) --- */
+    /* --- PROOF CARD STYLES --- */
     .proof-card {
       background-image: radial-gradient(var(--text-primary) 0.5px, transparent 0);
       background-size: 6px 6px;
       background-position: 0 0;
-      position: relative; /* Establishes a stacking context */
+      position: relative;
       transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
       overflow: hidden;
       align-self: stretch;
     }
-    /* NEW: This rule brings the card's direct children (header, icon div) to the front */
     .proof-card > * {
         position: relative;
         z-index: 2;
@@ -140,17 +142,14 @@ const GlobalStyles = () => (
       opacity: 0;
       transition: opacity 0.4s ease-in-out;
       mix-blend-mode: soft-light;
-      z-index: 1; /* FIXED: Sits on top of the card's bg, but below the content */
+      z-index: 1;
     }
-    
-    /* Specific gradients for inner glow based on hover class */
     .proof-container.hover-magenta .proof-card::before {
       background-image: radial-gradient(circle, var(--accent-magenta) 0%, var(--accent-lime) 100%);
     }
     .proof-container.hover-lime .proof-card::before {
       background-image: radial-gradient(circle, var(--accent-lime) 0%, var(--accent-magenta) 100%);
     }
-
     .proof-card svg {
         transition: transform 0.3s ease-out;
     }
@@ -158,7 +157,7 @@ const GlobalStyles = () => (
         transform: scale(1.1);
     }
     .proof-container:hover .proof-card::before {
-      opacity: 0.25; /* Active opacity for the inner glow */
+      opacity: 0.25;
     }
     .proof-container.tilt-left:hover .proof-card {
       transform: translateY(-8px) rotate(-1.5deg);
@@ -177,7 +176,6 @@ const GlobalStyles = () => (
     .solution-left {
         perspective: 2000px;
     }
-
     .book-container {
         position: relative;
         width: 100%;
@@ -185,8 +183,14 @@ const GlobalStyles = () => (
         height: 450px;
         margin: 0 auto;
         transform-style: preserve-3d;
+        transform: scale(0.8);
     }
-
+    @media (min-width: 640px) {
+      .book-container { transform: scale(0.9); }
+    }
+    @media (min-width: 1024px) {
+      .book-container { transform: scale(1); }
+    }
     .book-cover, .book-page {
         position: absolute;
         inset: 0;
@@ -195,17 +199,14 @@ const GlobalStyles = () => (
         transform-style: preserve-3d;
         box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     }
-    
     .book-page.is-turned {
         box-shadow: -2px 0 5px rgba(0,0,0,0.15);
     }
-
     .book-face {
         position: absolute;
         inset: 0;
         backface-visibility: hidden;
     }
-    
     .book-cover {
         cursor: pointer;
         box-shadow: 3px 0 8px rgba(0,0,0,0.2);
@@ -225,11 +226,9 @@ const GlobalStyles = () => (
         background-color: #333;
         transform: rotateY(180deg);
     }
-
     .book-cover.is-open {
         transform: rotateY(-180deg);
     }
-
     .book-page {
         inset: 6px 6px 6px 3px;
     }
@@ -243,15 +242,8 @@ const GlobalStyles = () => (
         transform: rotateY(180deg);
         background-image: linear-gradient(to left, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 15%);
     }
-
-    .book-page.is-turned {
-        transform: rotateY(-180deg);
-    }
-
-    .book-page.is-active {
-        transform: rotateY(0deg);
-    }
-
+    .book-page.is-turned { transform: rotateY(-180deg); }
+    .book-page.is-active { transform: rotateY(0deg); }
     .page-tab {
         position: absolute;
         right: -2px;
@@ -267,16 +259,11 @@ const GlobalStyles = () => (
         text-align: center;
         transition: background-color 0.3s ease;
     }
-
-    .book-page:hover .page-tab {
-      background-color: var(--accent-lime) !important;
-    }
-    
+    .book-page:hover .page-tab { background-color: var(--accent-lime) !important; }
     .book-page:nth-of-type(1) .page-tab { top: 15%; width: 150px; }
     .book-page:nth-of-type(2) .page-tab { top: 35%; width: 120px; }
     .book-page:nth-of-type(3) .page-tab { top: 55%; width: 140px; }
     .book-page:nth-of-type(4) .page-tab { top: 75%; width: 130px; }
-
     .page-content {
       width: 100%;
       height: 100%;
@@ -287,7 +274,6 @@ const GlobalStyles = () => (
       padding: 1.5rem;
       text-align: center;
     }
-    
     .page-description {
         opacity: 0;
         transform: translateY(10px);
@@ -295,7 +281,6 @@ const GlobalStyles = () => (
         font-size: 1rem;
         margin-top: 1rem;
     }
-
     .book-page.is-active .page-description {
         opacity: 1;
         transform: translateY(0);
@@ -306,9 +291,7 @@ const GlobalStyles = () => (
       position: relative;
       transition: color 0.3s ease;
     }
-    .footer-link:hover {
-      color: var(--accent-magenta);
-    }
+    .footer-link:hover { color: var(--accent-magenta); }
     .footer-link::after {
       content: '';
       position: absolute;
@@ -327,31 +310,53 @@ const GlobalStyles = () => (
     }
     .social-icon {
       transition: transform 0.2s ease-out, color 0.2s ease-out;
+      color: var(--text-primary);
     }
     .social-icon:hover {
-      transform: translateY(-3px);
-      color: var(--accent-lime);
+      transform: translateY(-3px) scale(1.1);
+      color: var(--accent-magenta);
     }
   `}</style>
 );
 
-const Navbar = () => (
-  <header className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl p-3 z-50 bg-white/20 backdrop-blur-lg rounded-xl border border-white/30 shadow-lg font-ui">
-    <div className="container mx-auto flex justify-between items-center">
-      <a href="#hero" className="font-headline text-2xl sm:text-3xl text-black">VAR</a>
-      <div className="hidden md:flex items-center space-x-4 lg:space-x-8 text-base sm:text-lg">
-        <a href="#hero" className="nav-link">Home</a>
-        <a href="#philosophy" className="nav-link">About</a>
-        <a href="#solution" className="nav-link">Services</a>
-        <a href="#pricing" className="nav-link">Pricing</a>
-        <a href="#closing" className="nav-link">Contact</a>
-      </div>
+const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  return (
+    <header className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl p-3 z-50 bg-white/20 backdrop-blur-lg rounded-xl border border-white/30 shadow-lg font-ui">
+      <div className="container mx-auto flex justify-between items-center relative">
+        <a href="#hero" className="font-headline text-2xl sm:text-3xl text-black">VAR</a>
+        <div className="hidden md:flex items-center space-x-4 lg:space-x-8 text-base sm:text-lg">
+          <a href="#hero" className="nav-link">Home</a>
+          <a href="#about-us" className="nav-link">About</a>
+          <a href="#solution" className="nav-link">Services</a>
+          <a href="#pricing" className="nav-link">Pricing</a>
+          <a href="#closing" className="nav-link">Contact</a>
+        </div>
         <div className="md:hidden">
-        <svg className="w-8 h-8 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+          <button onClick={toggleMenu} aria-label="Toggle menu" className="relative z-10">
+            {isMenuOpen ? (
+                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            ) : (
+                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            )}
+          </button>
+        </div>
+        <div className={`absolute top-0 left-0 w-full bg-white/95 backdrop-blur-md mt-0 rounded-lg border border-white/30 p-4 md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? 'transform translate-y-0' : 'transform -translate-y-[150%]'}`}>
+          <nav className="flex flex-col items-center space-y-4 mt-16">
+            <a href="#hero" className="block text-center text-xl py-2 nav-link" onClick={toggleMenu}>Home</a>
+            <a href="#about-us" className="block text-center text-xl py-2 nav-link" onClick={toggleMenu}>About</a>
+            <a href="#solution" className="block text-center text-xl py-2 nav-link" onClick={toggleMenu}>Services</a>
+            <a href="#pricing" className="block text-center text-xl py-2 nav-link" onClick={toggleMenu}>Pricing</a>
+            <a href="#closing" className="block text-center text-xl py-2 nav-link" onClick={toggleMenu}>Contact</a>
+          </nav>
+        </div>
       </div>
-    </div>
-  </header>
-);
+    </header>
+  );
+};
+
 
 const WindowControls = () => (
   <div className="flex space-x-1">
@@ -363,7 +368,6 @@ const WindowControls = () => (
 
 const VarBotWaving = ({ className }) => (
     <svg className={className} viewBox="0 0 150 200" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 4, fill: "none", stroke: "var(--text-primary)"}}>
-        {/* Head and Body */}
         <rect x="35" y="20" width="80" height="60" fill="var(--bg-primary)"/>
         <path d="M75,20 V10 H65 V5 h20 v5 H75"/>
         <circle className="bot-eye" cx="60" cy="50" r="8" fill="var(--text-primary)"/>
@@ -371,18 +375,12 @@ const VarBotWaving = ({ className }) => (
         <circle className="bot-eye" cx="90" cy="50" r="8" fill="var(--text-primary)"/>
         <path d="M82,50 v-8" stroke="var(--bg-primary)" strokeWidth="2"/>
         <rect x="45" y="80" width="60" height="70" fill="var(--bg-primary)"/>
-        
-        {/* Left arm: Waving up with the ball attached */}
         <g className="bot-waving-arm">
             <path d="M45,95 C 20,80 25,50 45,60" />
             <path d="M45,60 m -10, 0 a 10,10 0 1,0 20,0 a 10,10 0 1,0 -20,0" fill="var(--bg-primary)"/>
         </g>
-        
-        {/* Right arm: Kept in its original style */}
         <path d="M115,95 C 130,100 135,120 120,130" />
         <path d="M120,135 m -10, 0 a 10,10 0 1,0 20,0 a 10,10 0 1,0 -20,0" fill="var(--bg-primary)"/>
-        
-        {/* Legs */}
         <path d="M60,150 C 50,170 40,190 50,200"/>
         <path d="M90,150 C 100,170 110,190 100,200"/>
     </svg>
@@ -560,6 +558,64 @@ const BookComponent = () => {
     );
 };
 
+const AboutUs = () => {
+    const GmailIcon = ({ className }) => (
+        <svg className={className} viewBox="0 0 24 24" fill="currentColor"><path d="M22 6C22 4.9 21.1 4 20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6ZM20 6L12 11L4 6H20ZM20 18H4V8L12 13L20 8V18Z"></path></svg>
+    );
+
+    const LinkedInIcon = ({ className }) => (
+        <svg className={className} viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg>
+    );
+    
+    const teamMembers = [
+        {
+            name: "Rahul",
+            title: "Co-Founder & Lead Developer",
+            bio: "The architectural mind behind our robust digital solutions. Vivek turns complex challenges into elegant, high-performance applications.",
+            imgSrc: "https://placehold.co/250x250/D4FF00/1A1A1A?text=R",
+            linkedin: "#",
+            gmail: "mailto:#",
+            bgColor: "bg-lime-200"
+        },
+        {
+            name: "Vivek",
+            title: "Co-Founder & Creative Director",
+            bio: "The visionary force behind our creative strategies, Rahul blends artistry with analytics to craft compelling brand narratives that resonate and inspire.",
+            imgSrc: "https://placehold.co/250x250/FF00DD/1A1A1A?text=V",
+            linkedin: "#",
+            gmail: "mailto:#",
+            bgColor: "bg-fuchsia-200"
+        }
+    ];
+
+    return (
+        <section id="about-us" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
+            <div className="max-w-5xl mx-auto text-center">
+                <h2 className="font-headline text-5xl md:text-7xl mb-16 about-us-headline">Meet The Founders</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
+                    {teamMembers.map((member) => (
+                        <div key={member.name} className={`founder-card relative overflow-hidden p-6 flex flex-col items-center text-left space-y-4 border-2 border-black rounded-xl ${member.bgColor} shadow-lg`}>
+                           <div className="flex items-start w-full space-x-4">
+                                <img src={member.imgSrc} alt={`Portrait of ${member.name}`} className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg border-2 border-black object-cover"/>
+                                <div className="flex-1">
+                                   <h3 className="font-signature text-5xl sm:text-6xl">{member.name}</h3>
+                                   <p className="font-ui text-lg text-black/80">{member.title}</p>
+                                </div>
+                           </div>
+                           <p className="text-base leading-relaxed self-start">{member.bio}</p>
+                           <div className="flex space-x-6 pt-4 self-start">
+                                <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="social-icon text-2xl"><LinkedInIcon className="w-8 h-8"/></a>
+                                <a href={member.gmail} className="social-icon text-2xl"><GmailIcon className="w-8 h-8"/></a>
+                           </div>
+                           <svg className="absolute -bottom-10 -right-10 w-40 h-40 text-black/10 decorative-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
+
 
 export default function App() {
     
@@ -628,23 +684,19 @@ const LinkedInIcon = ({ className }) => (
         });
         
        gsap.to(".underline-mask", { 
-    width: 200, 
-    ease: "none",
-    scrollTrigger: { 
-        trigger: ".philosophy-punchline", 
-        start: "top center", 
-        end: "bottom center", 
-        scrub: 1 
-    }, 
-});
+        width: 200, 
+        ease: "none",
+        scrollTrigger: { 
+            trigger: ".philosophy-punchline", 
+            start: "top center", 
+            end: "bottom center", 
+            scrub: 1 
+        }, 
+    });
 
         gsap.from([".solution-left", ".solution-right"], {
           scrollTrigger: { trigger: "#solution", start: "top 70%", toggleActions: "play none none reverse" },
-          opacity: 0,
-          y: 60,
-          duration: 1.2,
-          ease: "power3.out",
-          stagger: 0.2
+          opacity: 0, y: 60, duration: 1.2, ease: "power3.out", stagger: 0.2
         });
         
         gsap.to(".solution-underline .underline-mask", {
@@ -666,13 +718,8 @@ const LinkedInIcon = ({ className }) => (
 
         const closingChars = splitText(".closing-headline");
         gsap.from(closingChars, {
-            opacity: 0,
-            scaleY: 0,
-            y: -50,
-            transformOrigin: "top",
-            stagger: 0.03,
-            duration: 0.8,
-            ease: 'power3.out',
+            opacity: 0, scaleY: 0, y: -50, transformOrigin: "top", stagger: 0.03,
+            duration: 0.8, ease: 'power3.out',
             scrollTrigger: { trigger: "#closing", start: "top 60%" }
         });
         
@@ -682,6 +729,23 @@ const LinkedInIcon = ({ className }) => (
                 trigger: "#solution", start: "top bottom", end: "bottom top", scrub: 1.5
             }
         });
+        
+        // Animations for About Us section
+        gsap.from(".about-us-headline", {
+            scrollTrigger: { trigger: "#about-us", start: "top 80%" },
+            opacity: 0, y: 50, duration: 1, ease: 'power3.out'
+        });
+
+        gsap.from(".founder-card", {
+            scrollTrigger: { trigger: ".founder-card", start: "top 85%", stagger: 0.3 },
+            opacity: 0, y: 50, scale: 0.95, duration: 0.8, ease: 'power3.out'
+        });
+
+        gsap.from(".founder-card .decorative-svg", {
+            scrollTrigger: { trigger: ".founder-card", start: "top 85%" },
+            opacity: 0, scale: 0.5, rotation: -45, duration: 1, ease: 'elastic.out(1, 0.75)', delay: 0.5
+        });
+
 
     }, mainRef);
 
@@ -695,36 +759,36 @@ const LinkedInIcon = ({ className }) => (
       <div className="paper-texture"></div>
       <main ref={mainRef} className="bg-[--bg-primary] text-[--text-primary] font-['Inter'] selection:bg-[--accent-lime] selection:text-[--text-primary]">
         
-<section id="hero" className="relative min-h-screen w-full mt-16 flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">             <div className="absolute inset-0 halftone-bg opacity-30"></div>
-            <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-7xl mx-auto -mt-24">
-                <div className="relative z-10 space-y-6">
-                <div className="hero-card window-card p-6 md:p-8 lg:p-4">
-<h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-6xl leading-tight">
-    Every business deservesa digital presence that performs, scales,  and  inspires.
-</h1>
-</div>
-
-                    <div className="hero-card window-card p-4 md:p-6 ml-0 lg:ml-12 overflow-hidden">
-                        <p className="hero-subtext text-lg md:text-xl">
-                            At VAR, we don’t just build websites. We craft digital experiences.
-                        </p>
-                    </div>
-                     <div className="hero-cta inline-block ml-0 lg:ml-24">
-                        <a href="#closing" className="press-effect btn-lime font-ui text-xl md:text-2xl p-4 md:px-8 md:py-5 inline-block">
-                            <span className="btn-arrow-icon mr-2">→</span> Start the Journey
-                        </a>
-                    </div>
-                </div>
-                <div className="relative h-full row-start-1 lg:col-start-2 flex items-center justify-center">
-                    <VarBotWaving className="var-bot-hero w-[250px] h-[333px] md:w-[300px] md:h-[400px] z-20 drop-shadow-lg"/>
-                </div>
+<section id="hero" className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">
+    <div className="absolute inset-0 halftone-bg opacity-30"></div>
+    <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center max-w-7xl mx-auto mt-16 lg:mt-0">
+        <div className="relative z-10 space-y-6 text-center lg:text-left">
+            <div className="hero-card window-card p-6 md:p-8">
+                <h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-6xl leading-snug">
+                    Every business deserves a digital presence that performs, scales, and inspires.
+                </h1>
             </div>
-            <div className="hero-sticker absolute top-[15%] left-[5%] sm:left-[10%] w-16 h-16 bg-[--accent-magenta] rotate-[-15deg]"></div>
-            <svg className="hero-sticker absolute bottom-[20%] right-[5%] w-20 h-20 rotate-[25deg]" viewBox="0 0 100 100">
-                <path d="M50 0L61 39L100 39L69 62L80 100L50 75L20 100L31 62L0 39L39 39Z" fill="var(--accent-lime)"/>
-            </svg>
-            <div className="hero-sticker absolute top-[25%] right-[10%] sm:right-[15%] w-12 h-12 bg-[--accent-lime] rounded-full"></div>
-        </section>
+            <div className="hero-card window-card p-4 md:p-6 lg:ml-12 overflow-hidden">
+                <p className="hero-subtext text-lg md:text-xl">
+                    At VAR, we don’t just build websites. We craft digital experiences.
+                </p>
+            </div>
+            <div className="hero-cta inline-block lg:ml-24">
+                <a href="#closing" className="press-effect btn-lime font-ui text-xl md:text-2xl p-4 md:px-8 md:py-5 inline-block">
+                    <span className="btn-arrow-icon mr-2">→</span> Start the Journey
+                </a>
+            </div>
+        </div>
+        <div className="relative h-full row-start-1 lg:col-start-2 flex items-center justify-center">
+            <VarBotWaving className="var-bot-hero w-[250px] h-[333px] sm:w-[300px] sm:h-[400px] z-20 drop-shadow-lg"/>
+        </div>
+    </div>
+    <div className="hero-sticker absolute top-[15%] left-[5%] sm:left-[10%] w-16 h-16 bg-[--accent-magenta] rotate-[-15deg]"></div>
+    <svg className="hero-sticker absolute bottom-[20%] right-[5%] w-20 h-20 rotate-[25deg]" viewBox="0 0 100 100">
+        <path d="M50 0L61 39L100 39L69 62L80 100L50 75L20 100L31 62L0 39L39 39Z" fill="var(--accent-lime)"/>
+    </svg>
+    <div className="hero-sticker absolute top-[25%] right-[10%] sm:right-[15%] w-12 h-12 bg-[--accent-lime] rounded-full"></div>
+</section>
 
         <section id="problem" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
              <div className="terminal-window max-w-4xl mx-auto p-4 sm:p-6 md:p-8 font-ui text-lg sm:text-xl md:text-3xl text-[--accent-lime] space-y-2">
@@ -750,6 +814,8 @@ const LinkedInIcon = ({ className }) => (
                  </div>
             </div>
         </section>
+        
+        <AboutUs />
 
         <section id="solution" className="relative py-20 md:py-32 px-4 sm:px-6 md:px-8 overflow-hidden">
             <GridPattern className="absolute top-1/4 -left-20 opacity-20 deco-grid" />
@@ -759,7 +825,7 @@ const LinkedInIcon = ({ className }) => (
                     <BookComponent />
                 </div>
 
-                <div className="solution-right space-y-6">
+                <div className="solution-right space-y-6 text-center lg:text-left">
                      <h2 className="font-headline text-4xl md:text-5xl lg:text-6xl">A Four-Step Symphony of Creation</h2>
                      <p className="text-lg md:text-xl lg:text-2xl leading-relaxed">
                         We transform your vision into a digital masterpiece. Our process is a fusion of creative strategy and technical precision, ensuring every pixel and line of code serves a purpose. It's a true&nbsp;
@@ -780,78 +846,74 @@ const LinkedInIcon = ({ className }) => (
             Proof in Every Pixel
         </h2>
 
-        {/* Proof Point 1: Fast & Scalable (Lime Text -> Magenta Hover, Card Left -> Tilt Left) */}
-        <div className="proof-container group hover-magenta tilt-left grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
+        <div className="proof-container group hover-magenta tilt-left grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 mb-20">
             <div className="proof-card window-card flex flex-col">
                 <div className="window-header"><h3 className="font-ui window-title">01. Fast & Scalable</h3><WindowControls/></div>
-                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
+                <div className="p-6 md:p-8 flex-grow flex justify-center items-center h-48 md:h-auto">
                     <RocketSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
                 </div>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 text-center md:text-left">
                 <h3 className="font-headline text-4xl text-[--accent-lime]">Blazing Performance</h3>
                 <p className="text-lg leading-relaxed">
-                    Ever waited for a website to load forever? Not on our watch. We engineer every solution for lightning-fast delivery and seamless scalability, ensuring your digital presence can handle anything you throw at it, today and tomorrow.
+                    Ever waited for a website to load forever? Not on our watch. We engineer every solution for lightning-fast delivery and seamless scalability.
                 </p>
                 <p className="text-base text-gray-600 font-ui">
-                    Technology stack optimized for speed: React, Next.js, Cloudflare.
+                    Stack: React, Next.js, Cloudflare.
                 </p>
             </div>
         </div>
 
-        {/* Proof Point 2: Secure by Design (Magenta Text -> Lime Hover, Card Right -> Tilt Right) */}
-        <div className="proof-container group hover-lime tilt-right grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
-            <div className="space-y-4">
+        <div className="proof-container group hover-lime tilt-right grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 mb-20">
+            <div className="space-y-4 text-center md:text-left order-last md:order-first">
                 <h3 className="font-headline text-4xl text-[--accent-magenta]">Fort Knox Security</h3>
                 <p className="text-lg leading-relaxed">
-                    Your data and your users' trust are paramount. Our "secure by design" philosophy means security is baked into every layer of your application, from initial concept to final deployment. Sleep easy knowing you're protected.
+                    Your data and your users' trust are paramount. Our "secure by design" philosophy means security is baked into every layer of your application.
                 </p>
                 <p className="text-base text-gray-600 font-ui">
-                    Regular security audits, robust authentication, and data encryption.
+                    Audits, robust authentication, and encryption.
                 </p>
             </div>
             <div className="proof-card window-card flex flex-col">
                 <div className="window-header"><h3 className="font-ui window-title">02. Secure by Design</h3><WindowControls/></div>
-                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
+                <div className="p-6 md:p-8 flex-grow flex justify-center items-center h-48 md:h-auto">
                     <LockSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
                 </div>
             </div>
         </div>
 
-        {/* Proof Point 3: Modern UI/UX (Lime Text -> Magenta Hover, Card Left -> Tilt Left) */}
-        <div className="proof-container group hover-magenta tilt-left grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
+        <div className="proof-container group hover-magenta tilt-left grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 mb-20">
             <div className="proof-card window-card flex flex-col">
                 <div className="window-header"><h3 className="font-ui window-title">03. Modern UI/UX</h3><WindowControls/></div>
-                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
+                <div className="p-6 md:p-8 flex-grow flex justify-center items-center h-48 md:h-auto">
                     <WandSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
                 </div>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 text-center md:text-left">
                 <h3 className="font-headline text-4xl text-[--accent-lime]">Intuitive & Beautiful</h3>
                 <p className="text-lg leading-relaxed">
-                    Design isn't just about looks; it's about how it works. We craft interfaces that are a joy to use, intuitive to navigate, and stunning to behold. Elevate your brand with a user experience that captivates and converts.
+                   Design isn't just about looks; it's about how it works. We craft interfaces that are a joy to use, intuitive to navigate, and stunning to behold.
                 </p>
                 <p className="text-base text-gray-600 font-ui">
-                    User-centered design principles, accessibility focus, modern aesthetics.
+                    User-centered, accessible, and modern.
                 </p>
             </div>
         </div>
 
-        {/* Proof Point 4: Delivered Before Time (Magenta Text -> Lime Hover, Card Right -> Tilt Right) */}
-        <div className="proof-container group hover-lime tilt-right grid grid-cols-1 md:grid-cols-2 items-center gap-12">
-            <div className="space-y-4">
+        <div className="proof-container group hover-lime tilt-right grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12">
+             <div className="space-y-4 text-center md:text-left order-last md:order-first">
                 <h3 className="font-headline text-4xl text-[--accent-magenta]">On-Time. Every Time.</h3>
                 <p className="text-lg leading-relaxed">
-                    Deadlines aren't just suggestions; they're commitments. Our streamlined agile processes and dedicated team ensure your project isn't just delivered, but delivered *before* you expect it, without compromising quality.
+                   Deadlines aren't just suggestions; they're commitments. Our streamlined agile processes ensure your project is delivered on time, without fail.
                 </p>
                 <p className="text-base text-gray-600 font-ui">
-                    Agile methodologies, clear communication, transparent progress tracking.
+                    Agile methodologies, clear communication.
                 </p>
             </div>
             <div className="proof-card window-card flex flex-col">
                 <div className="window-header"><h3 className="font-ui window-title">04. Delivered Before Time</h3><WindowControls/></div>
-                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
-                    <BoltSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800 mb-12" />
+                <div className="p-6 md:p-8 flex-grow flex justify-center items-center h-48 md:h-auto">
+                    <BoltSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
                 </div>
             </div>
         </div>
@@ -859,7 +921,7 @@ const LinkedInIcon = ({ className }) => (
 </section>
 
         <section id="pricing" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 items-end">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 items-end">
                 <div className="pricing-card window-card">
                     <div className="window-header"><h3 className="font-ui window-title text-sm sm:text-base">Your first step online.</h3><WindowControls/></div>
                     <div className="p-6 md:p-8 space-y-4">
@@ -867,7 +929,7 @@ const LinkedInIcon = ({ className }) => (
                         <p className="text-base md:text-lg">Perfect for individuals and small projects getting off the ground.</p>
                     </div>
                 </div>
-                 <div className="pricing-card window-card relative">
+                 <div className="pricing-card window-card relative md:col-span-2 lg:col-span-1">
                     <div className="best-value-sticker absolute -top-6 -right-6 font-headline text-lg bg-[--accent-magenta] text-[--text-primary] px-4 py-2 rotate-[10deg] border-2 border-black">BEST VALUE</div>
                     <div className="window-header"><h3 className="font-ui window-title text-sm sm:text-base">Built to grow with you.</h3><WindowControls/></div>
                     <div className="p-6 md:p-8 space-y-4">
@@ -875,7 +937,7 @@ const LinkedInIcon = ({ className }) => (
                         <p className="text-base md:text-lg">The ideal package for growing businesses that need to make an impact.</p>
                     </div>
                 </div>
-                <div className="pricing-card window-card">
+                <div className="pricing-card window-card md:col-start-1 md:col-end-3 lg:col-auto">
                     <div className="window-header"><h3 className="font-ui window-title text-sm sm:text-base">Custom. Powerful. Limitless.</h3><WindowControls/></div>
                     <div className="p-6 md:p-8 space-y-4">
                         <h4 className="font-headline text-3xl">Enterprise</h4>
@@ -889,7 +951,7 @@ const LinkedInIcon = ({ className }) => (
         </section>
 
         <section id="closing" className="min-h-screen bg-[--text-primary] text-[--bg-primary] flex flex-col justify-center items-center text-center p-4 md:p-8">
-            <h2 className="closing-headline font-headline text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-[--bg-primary]">Your vision. Our code. Together, we build the future.</h2>
+            <h2 className="closing-headline font-headline text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-[--bg-primary] leading-snug">Your vision. Our code. Together, we build the future.</h2>
              <div className="mt-12">
                  <a href="https://var-project-request-ef75.vercel.app/" target="_blank" rel="noopener noreferrer" className="press-effect bg-[--accent-lime] text-[--text-primary] font-ui text-2xl sm:text-3xl p-4 sm:p-6 hover:bg-[--bg-primary] hover:text-[--accent-lime] inline-block">
                     <span className="btn-arrow-icon mr-2">→</span> Let’s Talk
@@ -900,33 +962,28 @@ const LinkedInIcon = ({ className }) => (
         <footer id="footer" className="py-16 px-4 md:px-8">
     <div className="max-w-7xl mx-auto">
         
-        {/* Top Branding & Divider */}
         <div className="text-center mb-12">
              <a href="#hero" className="font-headline text-5xl text-black">VAR</a>
         </div>
 
-        {/* Footer Links Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-y-10 gap-x-8 text-center md:text-left">
             
-            {/* Navigate Column */}
             <div>
                 <h4 className="font-ui text-2xl mb-4 text-black">Navigate</h4>
                 <ul className="space-y-3">
                     <li><a href="#hero" className="font-ui text-lg footer-link">Home</a></li>
-                    <li><a href="#philosophy" className="font-ui text-lg footer-link">About</a></li>
+                    <li><a href="#about-us" className="font-ui text-lg footer-link">About</a></li>
                     <li><a href="#solution" className="font-ui text-lg footer-link">Services</a></li>
                     <li><a href="#pricing" className="font-ui text-lg footer-link">Pricing</a></li>
                 </ul>
             </div>
             
-            {/* Connect Column */}
             <div>
                 <h4 className="font-ui text-2xl mb-4 text-black">Connect</h4>
                 <ul className="space-y-3">
                     <li>
                         <a href="mailto:hello@var.agency" className="font-ui text-lg footer-link">hello@var.agency</a>
                     </li>
-                    {/* Social Links */}
                     <li className="flex items-center space-x-5 mt-4 justify-center md:justify-start">
                         <a href="#" className="social-icon">
                             <XIcon className="w-6 h-6"/>
@@ -938,7 +995,6 @@ const LinkedInIcon = ({ className }) => (
                 </ul>
             </div>
             
-            {/* Legal Column */}
             <div>
                 <h4 className="font-ui text-2xl mb-4 text-black">Legal</h4>
                 <ul className="space-y-3">
@@ -949,7 +1005,6 @@ const LinkedInIcon = ({ className }) => (
 
         </div>
         
-        {/* Copyright */}
         <div className="text-center font-ui text-base text-[--text-primary] opacity-80 mt-16 pt-8 border-t border-solid border-[--text-primary]/30">
             © {new Date().getFullYear()} VAR Agency. All Rights Reserved.
         </div>
@@ -960,5 +1015,4 @@ const LinkedInIcon = ({ className }) => (
     </>
   );
 }
-
 
