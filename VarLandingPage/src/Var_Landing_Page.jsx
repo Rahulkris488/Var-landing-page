@@ -3,13 +3,13 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
 
+
 // NOTE: This component is designed to work with GSAP and its plugins loaded globally
 // via <script> tags in your main HTML file. This avoids potential bundling issues
 // and is a reliable method for this setup.
 
 const GlobalStyles = () => (
-  <style>{`
-    
+ <style>{`
     :root {
       --bg-primary: #F7F5F0;
       --text-primary: #1A1A1A;
@@ -22,6 +22,7 @@ const GlobalStyles = () => (
     body {
       background-color: var(--bg-primary);
       color: var(--text-primary);
+      overflow-x: hidden;
     }
     .font-headline {
       font-family: 'Anton', sans-serif;
@@ -46,15 +47,15 @@ const GlobalStyles = () => (
       box-shadow: 8px 8px 0px var(--text-primary);
     }
     .window-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 0.75rem;
-        border-bottom: 2px solid var(--text-primary);
-        background-color: var(--bg-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 2px solid var(--text-primary);
+      background-color: var(--bg-primary);
     }
     .window-title {
-        font-weight: bold;
+      font-weight: bold;
     }
     .press-effect {
       border: 2px solid var(--text-primary);
@@ -90,112 +91,91 @@ const GlobalStyles = () => (
       100% { background-position: 0 100%; }
     }
     .nav-link {
-        position: relative;
-        padding: 4px 8px;
-        transition: color 0.2s ease-in-out;
+      position: relative;
+      padding: 4px 8px;
+      transition: color 0.2s ease-in-out;
     }
     .nav-link:hover {
-        color: var(--accent-magenta);
+      color: var(--accent-magenta);
     }
     .nav-link::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        height: 2px;
-        background-color: var(--accent-magenta);
-        transition: width 0.3s ease;
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background-color: var(--accent-magenta);
+      transition: width 0.3s ease;
     }
     .nav-link:hover::after {
-        width: 100%;
+      width: 100%;
     }
     .split-text-char {
-        display: inline-block;
-        position: relative;
+      display: inline-block;
+      position: relative;
     }
-<<<<<<< HEAD
 
-    /* --- FINAL REBUILT BOOK STYLES --- */
-=======
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-        .proof-card {
-  /* Add a subtle halftone pattern to the card background */
-  background-image: radial-gradient(var(--text-primary) 0.5px, transparent 0);
-  background-size: 6px 6px;
-  background-position: 0 0;
-  
-  position: relative; /* Needed for the pseudo-element glow */
-  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
-  overflow: hidden; /* Keeps the glow effect contained */
-  z-index: 1;
-  align-self: stretch; /* Makes card fill the grid cell height */
-}
+    /* --- PROOF CARD STYLES (FIXED) --- */
+    .proof-card {
+      background-image: radial-gradient(var(--text-primary) 0.5px, transparent 0);
+      background-size: 6px 6px;
+      background-position: 0 0;
+      position: relative; /* Establishes a stacking context */
+      transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+      overflow: hidden;
+      align-self: stretch;
+    }
+    /* NEW: This rule brings the card's direct children (header, icon div) to the front */
+    .proof-card > * {
+        position: relative;
+        z-index: 2;
+    }
+    .proof-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 50% 50%, var(--accent-lime), var(--accent-magenta));
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+      mix-blend-mode: soft-light;
+      z-index: 1; /* FIXED: Sits on top of the card's bg, but below the content */
+    }
+    
+    /* Specific gradients for inner glow based on hover class */
+    .proof-container.hover-magenta .proof-card::before {
+      background-image: radial-gradient(circle, var(--accent-magenta) 0%, var(--accent-lime) 100%);
+    }
+    .proof-container.hover-lime .proof-card::before {
+      background-image: radial-gradient(circle, var(--accent-lime) 0%, var(--accent-magenta) 100%);
+    }
 
-/* Base styles for the ::before pseudo-element used for the glow */
-.proof-card::before {
-  content: '';
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200%; /* Make it large to create a soft, wide glow */
-  height: 200%;
-  filter: blur(60px);
-  opacity: 0;
-  transition: opacity 0.4s ease-in-out;
-  z-index: -1;
-}
-
-/* --- DEFINE GRADIENTS FOR EACH COLOR THEME --- */
-
-/* Magenta hover gets a magenta-dominant glow */
-.proof-container.hover-magenta .proof-card::before {
-  background-image: radial-gradient(circle, var(--accent-magenta) 0%, var(--accent-lime) 100%);
-}
-/* Lime hover gets a lime-dominant glow */
-.proof-container.hover-lime .proof-card::before {
-  background-image: radial-gradient(circle, var(--accent-lime) 0%, var(--accent-magenta) 100%);
-}
-
-/* The SVG Icon inside the card */
-.proof-card svg {
-    transition: transform 0.3s ease-out;
-}
-
-/* --- HOVER STATE --- */
-
-/* Generic hover transforms and icon scale for any proof container */
-.proof-container:hover .proof-card {
-  transform: translateY(-8px) rotate(-1.5deg);
-}
-.proof-container:hover .proof-card svg {
-    transform: scale(1.1);
-}
-
-/* Reveal glow on any hover */
-.proof-container:hover .proof-card::before {
-  opacity: 0.15; /* A subtle opacity for the background glow */
-}
-
-/* SPECIFIC hover shadow colors */
-.proof-container.hover-magenta:hover .proof-card {
-  box-shadow: 12px 12px 0px var(--accent-magenta);
-}
-
-.proof-container.hover-lime:hover .proof-card {
-  box-shadow: 12px 12px 0px var(--accent-lime);
-}
-        
->>>>>>> 11a9667f5611456c74228b846ce49a9d77d0de0c
-
-    /* --- REBUILT BOOK STYLES --- */
->>>>>>> 700ee2f73825707f370771918ab21eeedcb0f5c5
+    .proof-card svg {
+        transition: transform 0.3s ease-out;
+    }
+    .proof-container:hover .proof-card svg {
+        transform: scale(1.1);
+    }
+    .proof-container:hover .proof-card::before {
+      opacity: 0.25; /* Active opacity for the inner glow */
+    }
+    .proof-container.tilt-left:hover .proof-card {
+      transform: translateY(-8px) rotate(-1.5deg);
+    }
+    .proof-container.tilt-right:hover .proof-card {
+      transform: translateY(-8px) rotate(1.5deg);
+    }
+    .proof-container.hover-magenta:hover .proof-card {
+      box-shadow: 12px 12px 0px var(--accent-magenta);
+    }
+    .proof-container.hover-lime:hover .proof-card {
+      box-shadow: 12px 12px 0px var(--accent-lime);
+    }
+    
+    /* --- INTERACTIVE BOOK STYLES --- */
     .solution-left {
-        /* A smaller perspective value makes the 3D effect more pronounced */
-        perspective: 1800px;
+        perspective: 2000px;
     }
 
     .book-container {
@@ -211,9 +191,13 @@ const GlobalStyles = () => (
         position: absolute;
         inset: 0;
         transform-origin: left center;
-        /* Slower transition with a different easing to make the flip more deliberate and visible */
-        transition: transform 0.8s cubic-bezier(0.3, 0, 0.3, 1);
-        transform-style: preserve-3d; /* This is crucial */
+        transition: transform 1.2s ease-in-out;
+        transform-style: preserve-3d;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+    
+    .book-page.is-turned {
+        box-shadow: -2px 0 5px rgba(0,0,0,0.15);
     }
 
     .book-face {
@@ -224,6 +208,7 @@ const GlobalStyles = () => (
     
     .book-cover {
         cursor: pointer;
+        box-shadow: 3px 0 8px rgba(0,0,0,0.2);
     }
     .book-cover .book-face--front {
         border: 2px solid var(--text-primary);
@@ -237,7 +222,7 @@ const GlobalStyles = () => (
     }
     .book-cover .book-face--back {
         border: 2px solid var(--text-primary);
-        background-color: #333; /* Dark back for the cover */
+        background-color: #333;
         transform: rotateY(180deg);
     }
 
@@ -246,7 +231,7 @@ const GlobalStyles = () => (
     }
 
     .book-page {
-        inset: 6px 6px 6px 3px; /* Makes cover slightly larger */
+        inset: 6px 6px 6px 3px;
     }
     .book-page .book-face--front {
         border: 2px solid var(--text-primary);
@@ -254,8 +239,9 @@ const GlobalStyles = () => (
     }
     .book-page .book-face--back {
         border: 2px solid var(--text-primary);
-        background-color: #F0EDE5; /* Slightly different back page color */
+        background-color: #F0EDE5;
         transform: rotateY(180deg);
+        background-image: linear-gradient(to left, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 15%);
     }
 
     .book-page.is-turned {
@@ -263,7 +249,7 @@ const GlobalStyles = () => (
     }
 
     .book-page.is-active {
-        transform: rotateY(0deg); /* Active page is perfectly still */
+        transform: rotateY(0deg);
     }
 
     .page-tab {
@@ -314,44 +300,38 @@ const GlobalStyles = () => (
         opacity: 1;
         transform: translateY(0);
     }
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-        .footer-link {
-    position: relative;
-    transition: color 0.3s ease;
-}
-.footer-link:hover {
-    color: var(--accent-magenta);
-}
-.footer-link::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 1px;
-    background-color: var(--accent-magenta);
-    bottom: -2px;
-    left: 0;
-    transform: scaleX(0);
-    transform-origin: bottom right;
-    transition: transform 0.3s ease-out;
-}
-.footer-link:hover::after {
-    transform: scaleX(1);
-    transform-origin: bottom left;
-}
 
-.social-icon {
-    transition: transform 0.2s ease-out, color 0.2s ease-out;
-}
-.social-icon:hover {
-    transform: translateY(-3px);
-    color: var(--accent-lime);
-}
-=======
-
->>>>>>> 11a9667f5611456c74228b846ce49a9d77d0de0c
->>>>>>> 700ee2f73825707f370771918ab21eeedcb0f5c5
+    /* --- FOOTER LINK STYLES --- */
+    .footer-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .footer-link:hover {
+      color: var(--accent-magenta);
+    }
+    .footer-link::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      background-color: var(--accent-magenta);
+      bottom: -2px;
+      left: 0;
+      transform: scaleX(0);
+      transform-origin: bottom right;
+      transition: transform 0.3s ease-out;
+    }
+    .footer-link:hover::after {
+      transform: scaleX(1);
+      transform-origin: bottom left;
+    }
+    .social-icon {
+      transition: transform 0.2s ease-out, color 0.2s ease-out;
+    }
+    .social-icon:hover {
+      transform: translateY(-3px);
+      color: var(--accent-lime);
+    }
   `}</style>
 );
 
@@ -383,6 +363,7 @@ const WindowControls = () => (
 
 const VarBotWaving = ({ className }) => (
     <svg className={className} viewBox="0 0 150 200" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 4, fill: "none", stroke: "var(--text-primary)"}}>
+        {/* Head and Body */}
         <rect x="35" y="20" width="80" height="60" fill="var(--bg-primary)"/>
         <path d="M75,20 V10 H65 V5 h20 v5 H75"/>
         <circle className="bot-eye" cx="60" cy="50" r="8" fill="var(--text-primary)"/>
@@ -390,12 +371,18 @@ const VarBotWaving = ({ className }) => (
         <circle className="bot-eye" cx="90" cy="50" r="8" fill="var(--text-primary)"/>
         <path d="M82,50 v-8" stroke="var(--bg-primary)" strokeWidth="2"/>
         <rect x="45" y="80" width="60" height="70" fill="var(--bg-primary)"/>
+        
+        {/* Left arm: Waving up with the ball attached */}
         <g className="bot-waving-arm">
-            <path d="M35,95 C 10,80 -10,100 20,60 Q 30 40, 50 50"/>
-            <path d="M15,65 m -10, 0 a 10,10 0 1,0 20,0 a 10,10 0 1,0 -20,0" fill="var(--bg-primary)"/>
+            <path d="M45,95 C 20,80 25,50 45,60" />
+            <path d="M45,60 m -10, 0 a 10,10 0 1,0 20,0 a 10,10 0 1,0 -20,0" fill="var(--bg-primary)"/>
         </g>
+        
+        {/* Right arm: Kept in its original style */}
         <path d="M115,95 C 130,100 135,120 120,130" />
         <path d="M120,135 m -10, 0 a 10,10 0 1,0 20,0 a 10,10 0 1,0 -20,0" fill="var(--bg-primary)"/>
+        
+        {/* Legs */}
         <path d="M60,150 C 50,170 40,190 50,200"/>
         <path d="M90,150 C 100,170 110,190 100,200"/>
     </svg>
@@ -409,7 +396,6 @@ const RocketSVG = ({ className }) => ( <svg className={className} viewBox="0 0 2
 const LockSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect> <path d="M7 11V7a5 5 0 0110 0v4"></path> </svg> );
 const WandSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="M15 4l6 6m-9-3l-6 6l9 9l6-6l-9-9z"></path> <path d="M9 21l-6-6"></path> <path d="M21 3L12 12"></path> </svg> );
 const BoltSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon> </svg> );
-
 const ExcellenceUnderline = ({ className }) => (
     <svg className={className} viewBox="0 0 200 20" preserveAspectRatio="none">
         <defs>
@@ -465,12 +451,8 @@ const services = [
 
 const BookComponent = () => {
     const [activePageIndex, setActivePageIndex] = React.useState(-1);
-    
-    // A ref for the timer that delays actions on hover/leave
     const interactionTimer = React.useRef(null);
-    // A ref for the timer that sequences the page-turning animation
     const animationSequenceTimer = React.useRef(null);
-    // A ref to track the current animation, preventing overlaps
     const currentAnimationId = React.useRef(null);
 
     const cleanupTimers = () => {
@@ -478,90 +460,57 @@ const BookComponent = () => {
         clearTimeout(animationSequenceTimer.current);
     };
 
-    // This function animates pages sequentially to a target index
     const animatePages = (targetIndex) => {
-        // Give each new animation a unique ID. If a new one starts, the old one stops.
         const animationId = Date.now();
         currentAnimationId.current = animationId;
-
-        const pageTurnDelay = 150; // Milliseconds between each page turn
+        const pageTurnDelay = 200;
 
         const step = () => {
-            // If a newer animation has started, stop this one from continuing.
-            if (currentAnimationId.current !== animationId) {
-                return;
-            }
+            if (currentAnimationId.current !== animationId) return;
 
             setActivePageIndex(prevIndex => {
-                // Use the updater function to get the most recent state
                 const currentIndex = prevIndex;
-
-                // Determine direction and next page index
-                if (targetIndex > currentIndex) { // Opening pages
+                if (targetIndex > currentIndex) {
                     const nextIndex = currentIndex + 1;
-                    // If we haven't reached the target yet, schedule the next step
                     if (nextIndex <= targetIndex) {
                         animationSequenceTimer.current = setTimeout(step, pageTurnDelay);
                         return nextIndex;
                     }
-                } else if (targetIndex < currentIndex) { // Closing pages
+                } else if (targetIndex < currentIndex) {
                     const nextIndex = currentIndex - 1;
-                     // If we haven't reached the target yet, schedule the next step
                     if (nextIndex >= targetIndex) {
                         animationSequenceTimer.current = setTimeout(step, pageTurnDelay);
                         return nextIndex;
                     }
                 }
-                
-                // If animation is finished or no change is needed, return the current index
                 return currentIndex;
             });
         };
-        
-        // Start the animation sequence
         step();
     };
 
     const handleMouseEnterTab = (targetIndex) => {
         cleanupTimers();
-        if (targetIndex === activePageIndex) return; // No action if it's already the active page
-        
-        // Delay before starting the animation to avoid accidental triggers
-        interactionTimer.current = setTimeout(() => {
-            animatePages(targetIndex);
-        }, 150);
+        if (targetIndex === activePageIndex) return;
+        interactionTimer.current = setTimeout(() => animatePages(targetIndex), 150);
     };
 
     const handleMouseLeaveBook = () => {
         cleanupTimers();
-        // Delay before closing the book completely
-        interactionTimer.current = setTimeout(() => {
-            animatePages(-1); 
-        }, 200);
+        interactionTimer.current = setTimeout(() => animatePages(-1), 200);
     };
 
-    const handleMouseEnterBook = () => {
-        // Cancel any pending close animation when the mouse re-enters the book
-        cleanupTimers();
-    };
+    const handleMouseEnterBook = () => cleanupTimers();
     
-    // Cleanup timers when the component is removed
-    React.useEffect(() => {
-        return () => cleanupTimers();
-    }, []);
+    React.useEffect(() => () => cleanupTimers(), []);
 
     const getPageStyle = (index) => {
         const isTurned = activePageIndex > -1 && index < activePageIndex;
         const isActive = index === activePageIndex;
-        
         let zIndex;
-        if (isActive) {
-            zIndex = 50; 
-        } else if (isTurned) {
-            zIndex = index + 2; 
-        } else {
-            zIndex = services.length - index + 1;
-        }
+        if (isActive) zIndex = 50; 
+        else if (isTurned) zIndex = index + 2; 
+        else zIndex = services.length - index + 1;
         return { zIndex };
     };
     
@@ -587,11 +536,7 @@ const BookComponent = () => {
                     const pageClasses = `book-page ${isTurned ? 'is-turned' : ''} ${isActive ? 'is-active' : ''}`;
                     
                     return (
-                        <div 
-                            key={index} 
-                            className={pageClasses} 
-                            style={getPageStyle(index)}
-                        >
+                        <div key={index} className={pageClasses} style={getPageStyle(index)}>
                            <div className="book-face book-face--front">
                                 <div 
                                     className="page-tab font-ui" 
@@ -603,9 +548,7 @@ const BookComponent = () => {
                                 <div className="page-content space-y-4">
                                     {service.illustration}
                                     <h3 className="font-headline text-3xl">{service.headline}</h3>
-                                    <p className="page-description font-ui px-4">
-                                        {service.description}
-                                    </p>
+                                    <p className="page-description font-ui px-4">{service.description}</p>
                                 </div>
                            </div>
                            <div className="book-face book-face--back"></div>
@@ -619,7 +562,6 @@ const BookComponent = () => {
 
 
 export default function App() {
-
     
     const XIcon = ({ className }) => (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -632,7 +574,6 @@ const LinkedInIcon = ({ className }) => (
         <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.25 6.5 1.75 1.75 0 016.5 8.25zM19 19h-3v-4.75c0-1.4-1.2-2.5-2.5-2.5S11 12.85 11 14.25V19h-3v-9h2.9v1.3a3.11 3.11 0 012.6-1.4c2.5 0 4.5 2.2 4.5 5.1V19z"/>
     </svg>
 );
-
   const mainRef = React.useRef(null);
 
   React.useLayoutEffect(() => {
@@ -686,12 +627,16 @@ const LinkedInIcon = ({ className }) => (
           opacity: 0, y: 20, stagger: { amount: 0.5, from: "random" }, duration: 0.8, ease: 'power2.out'
         });
         
-        gsap.to(".philosophy-underline .underline-mask", { 
-            width: 200, ease: "none",
-            scrollTrigger: { 
-                trigger: ".philosophy-punchline", start: "top center", end: "bottom center", scrub: 1 
-            }, 
-        });
+       gsap.to(".underline-mask", { 
+    width: 200, 
+    ease: "none",
+    scrollTrigger: { 
+        trigger: ".philosophy-punchline", 
+        start: "top center", 
+        end: "bottom center", 
+        scrub: 1 
+    }, 
+});
 
         gsap.from([".solution-left", ".solution-right"], {
           scrollTrigger: { trigger: "#solution", start: "top 70%", toggleActions: "play none none reverse" },
@@ -750,15 +695,15 @@ const LinkedInIcon = ({ className }) => (
       <div className="paper-texture"></div>
       <main ref={mainRef} className="bg-[--bg-primary] text-[--text-primary] font-['Inter'] selection:bg-[--accent-lime] selection:text-[--text-primary]">
         
-        <section id="hero" className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">
-            <div className="absolute inset-0 halftone-bg opacity-30"></div>
-            <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-7xl mx-auto">
+<section id="hero" className="relative min-h-screen w-full mt-16 flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">             <div className="absolute inset-0 halftone-bg opacity-30"></div>
+            <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-7xl mx-auto -mt-24">
                 <div className="relative z-10 space-y-6">
-                    <div className="hero-card window-card p-6 md:p-8">
-                        <h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-7xl leading-tight">
-                            Every business deserves a digital presence that performs, scales, and inspires.
-                        </h1>
-                    </div>
+                <div className="hero-card window-card p-6 md:p-8 lg:p-4">
+<h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-6xl leading-tight">
+    Every business deservesa digital presence that performs, scales,  and  inspires.
+</h1>
+</div>
+
                     <div className="hero-card window-card p-4 md:p-6 ml-0 lg:ml-12 overflow-hidden">
                         <p className="hero-subtext text-lg md:text-xl">
                             At VAR, we don’t just build websites. We craft digital experiences.
@@ -829,26 +774,89 @@ const LinkedInIcon = ({ className }) => (
             </div>
         </section>
         
-        <section id="proof" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
-            <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-8">
-                <div className="proof-card window-card">
-                    <div className="window-header"><h3 className="font-ui window-title">🚀 Fast & Scalable</h3><WindowControls/></div>
-                    <div className="p-6 flex justify-center items-center h-48"><RocketSVG className="w-24 h-24 md:w-28 md:h-28 text-gray-800" /></div>
-                </div>
-                <div className="proof-card window-card">
-                    <div className="window-header"><h3 className="font-ui window-title">🔐 Secure by Design</h3><WindowControls/></div>
-                    <div className="p-6 flex justify-center items-center h-48"><LockSVG className="w-24 h-24 md:w-28 md:h-28 text-gray-800" /></div>
-                </div>
-                <div className="proof-card window-card">
-                    <div className="window-header"><h3 className="font-ui window-title">🎨 Modern UI/UX</h3><WindowControls/></div>
-                    <div className="p-6 flex justify-center items-center h-48"><WandSVG className="w-24 h-24 md:w-28 md:h-28 text-gray-800" /></div>
-                </div>
-                <div className="proof-card window-card">
-                    <div className="window-header"><h3 className="font-ui window-title">⚡ Delivered Before Time</h3><WindowControls/></div>
-                    <div className="p-6 flex justify-center items-center h-48"><BoltSVG className="w-24 h-24 md:w-28 md:h-28 text-gray-800" /></div>
+<section id="proof" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
+    <div className="max-w-7xl mx-auto">
+        <h2 className="font-headline text-5xl md:text-7xl text-center mb-16">
+            Proof in Every Pixel
+        </h2>
+
+        {/* Proof Point 1: Fast & Scalable (Lime Text -> Magenta Hover, Card Left -> Tilt Left) */}
+        <div className="proof-container group hover-magenta tilt-left grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
+            <div className="proof-card window-card flex flex-col">
+                <div className="window-header"><h3 className="font-ui window-title">01. Fast & Scalable</h3><WindowControls/></div>
+                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
+                    <RocketSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
                 </div>
             </div>
-        </section>
+            <div className="space-y-4">
+                <h3 className="font-headline text-4xl text-[--accent-lime]">Blazing Performance</h3>
+                <p className="text-lg leading-relaxed">
+                    Ever waited for a website to load forever? Not on our watch. We engineer every solution for lightning-fast delivery and seamless scalability, ensuring your digital presence can handle anything you throw at it, today and tomorrow.
+                </p>
+                <p className="text-base text-gray-600 font-ui">
+                    Technology stack optimized for speed: React, Next.js, Cloudflare.
+                </p>
+            </div>
+        </div>
+
+        {/* Proof Point 2: Secure by Design (Magenta Text -> Lime Hover, Card Right -> Tilt Right) */}
+        <div className="proof-container group hover-lime tilt-right grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
+            <div className="space-y-4">
+                <h3 className="font-headline text-4xl text-[--accent-magenta]">Fort Knox Security</h3>
+                <p className="text-lg leading-relaxed">
+                    Your data and your users' trust are paramount. Our "secure by design" philosophy means security is baked into every layer of your application, from initial concept to final deployment. Sleep easy knowing you're protected.
+                </p>
+                <p className="text-base text-gray-600 font-ui">
+                    Regular security audits, robust authentication, and data encryption.
+                </p>
+            </div>
+            <div className="proof-card window-card flex flex-col">
+                <div className="window-header"><h3 className="font-ui window-title">02. Secure by Design</h3><WindowControls/></div>
+                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
+                    <LockSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
+                </div>
+            </div>
+        </div>
+
+        {/* Proof Point 3: Modern UI/UX (Lime Text -> Magenta Hover, Card Left -> Tilt Left) */}
+        <div className="proof-container group hover-magenta tilt-left grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
+            <div className="proof-card window-card flex flex-col">
+                <div className="window-header"><h3 className="font-ui window-title">03. Modern UI/UX</h3><WindowControls/></div>
+                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
+                    <WandSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
+                </div>
+            </div>
+            <div className="space-y-4">
+                <h3 className="font-headline text-4xl text-[--accent-lime]">Intuitive & Beautiful</h3>
+                <p className="text-lg leading-relaxed">
+                    Design isn't just about looks; it's about how it works. We craft interfaces that are a joy to use, intuitive to navigate, and stunning to behold. Elevate your brand with a user experience that captivates and converts.
+                </p>
+                <p className="text-base text-gray-600 font-ui">
+                    User-centered design principles, accessibility focus, modern aesthetics.
+                </p>
+            </div>
+        </div>
+
+        {/* Proof Point 4: Delivered Before Time (Magenta Text -> Lime Hover, Card Right -> Tilt Right) */}
+        <div className="proof-container group hover-lime tilt-right grid grid-cols-1 md:grid-cols-2 items-center gap-12">
+            <div className="space-y-4">
+                <h3 className="font-headline text-4xl text-[--accent-magenta]">On-Time. Every Time.</h3>
+                <p className="text-lg leading-relaxed">
+                    Deadlines aren't just suggestions; they're commitments. Our streamlined agile processes and dedicated team ensure your project isn't just delivered, but delivered *before* you expect it, without compromising quality.
+                </p>
+                <p className="text-base text-gray-600 font-ui">
+                    Agile methodologies, clear communication, transparent progress tracking.
+                </p>
+            </div>
+            <div className="proof-card window-card flex flex-col">
+                <div className="window-header"><h3 className="font-ui window-title">04. Delivered Before Time</h3><WindowControls/></div>
+                <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
+                    <BoltSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800 mb-12" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
         <section id="pricing" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 items-end">
@@ -952,6 +960,5 @@ const LinkedInIcon = ({ className }) => (
     </>
   );
 }
-
 
 
