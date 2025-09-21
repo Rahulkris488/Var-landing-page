@@ -985,7 +985,7 @@ const LinkedInIcon = ({ className }) => (
                 <h4 className="font-ui text-2xl mb-4 text-black">Connect</h4>
                 <ul className="space-y-3">
                     <li>
-                        <a href="mailto:hello@var.agency" className="font-ui text-lg footer-link">hello@var.agency</a>
+                        <a href="mailto:hello@var.agency" className="font-ui text-lg footer-link">var.studio.agency@gmail.com</a>
                     </li>
                     <li className="flex items-center space-x-5 mt-4 justify-center md:justify-start">
                         <a href="#" className="social-icon">
