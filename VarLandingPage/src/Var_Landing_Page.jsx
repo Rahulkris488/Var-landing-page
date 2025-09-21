@@ -946,14 +946,17 @@ const LinkedInIcon = ({ className }) => (
                 </div>
             </div>
              <div className="text-center mt-16">
-                <a href="https://var-project-request-ef75.vercel.app/" target="_blank" rel="noopener noreferrer" className="press-effect btn-lime font-ui text-xl md:text-2xl p-4 px-8 inline-block">Request a Quote</a>
-            </div>
+  <a href="#closing" className="press-effect btn-lime font-ui text-xl md:text-2xl p-4 px-8 inline-block">
+    Request a Quote
+  </a>
+</div>
+
         </section>
 
         <section id="closing" className="min-h-screen bg-[--text-primary] text-[--bg-primary] flex flex-col justify-center items-center text-center p-4 md:p-8">
             <h2 className="closing-headline font-headline text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-[--bg-primary] leading-snug">Your vision. Our code. Together, we build the future.</h2>
              <div className="mt-12">
-                 <a href="https://var-project-request-ef75.vercel.app/" target="_blank" rel="noopener noreferrer" className="press-effect bg-[--accent-lime] text-[--text-primary] font-ui text-2xl sm:text-3xl p-4 sm:p-6 hover:bg-[--bg-primary] hover:text-[--accent-lime] inline-block">
+                 <a href="https://var-contact-us.vercel.app/" target="_blank" rel="noopener noreferrer" className="press-effect bg-[--accent-lime] text-[--text-primary] font-ui text-2xl sm:text-3xl p-4 sm:p-6 hover:bg-[--bg-primary] hover:text-[--accent-lime] inline-block">
                     <span className="btn-arrow-icon mr-2">→</span> Let’s Talk
                 </a>
             </div>
