@@ -572,18 +572,18 @@ const AboutUs = () => {
             name: "Rahul",
             title: "Co-Founder & Lead Developer",
             bio: "The architectural mind behind our robust digital solutions. Rahul turns complex challenges into elegant, high-performance applications.",
-            imgSrc: "https://placehold.co/250x250/D4FF00/1A1A1A?text=R",
-            linkedin: "#",
-            gmail: "mailto:#",
+            imgSrc: "src/assets/rahul.png",
+            linkedin: "https://www.linkedin.com/in/rahul-krishna-tp",
+            gmail: "mailto:rahulkrishnatp12@gmail.com",
             bgColor: "bg-lime-200"
         },
         {
             name: "Vivek",
             title: "Co-Founder & Creative Director",
             bio: "The visionary force behind our creative strategies, Vivek blends artistry with analytics to craft compelling brand narratives that resonate and inspire.",
-            imgSrc: "https://placehold.co/250x250/FF00DD/1A1A1A?text=V",
-            linkedin: "#",
-            gmail: "mailto:#",
+            imgSrc: "src/assets/vivek.png",
+            linkedin: "https://www.linkedin.com/in/vivek-sathish-poojary",
+            gmail: "mailto:viveksathishpoojary@gmail.com",
             bgColor: "bg-fuchsia-200"
         }
     ];
@@ -913,7 +913,7 @@ const LinkedInIcon = ({ className }) => (
             <div className="proof-card window-card flex flex-col">
                 <div className="window-header"><h3 className="font-ui window-title">04. Delivered Before Time</h3><WindowControls/></div>
                 <div className="p-6 md:p-8 flex-grow flex justify-center items-center h-48 md:h-auto">
-                    <BoltSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
+                    <BoltSVG className="w-32 h-32 mb-14 md:w-40 md:h-40 text-gray-800" />
                 </div>
             </div>
         </div>
