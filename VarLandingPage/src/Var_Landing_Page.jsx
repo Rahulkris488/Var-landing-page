@@ -8,8 +8,7 @@ import { TextPlugin } from 'gsap/TextPlugin';
 // and is a reliable method for this setup.
 
 const GlobalStyles = () => (
-  <style>{`
-    
+ <style>{`
     :root {
       --bg-primary: #F7F5F0;
       --text-primary: #1A1A1A;
@@ -46,15 +45,15 @@ const GlobalStyles = () => (
       box-shadow: 8px 8px 0px var(--text-primary);
     }
     .window-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 0.75rem;
-        border-bottom: 2px solid var(--text-primary);
-        background-color: var(--bg-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 2px solid var(--text-primary);
+      background-color: var(--bg-primary);
     }
     .window-title {
-        font-weight: bold;
+      font-weight: bold;
     }
     .press-effect {
       border: 2px solid var(--text-primary);
@@ -90,108 +89,92 @@ const GlobalStyles = () => (
       100% { background-position: 0 100%; }
     }
     .nav-link {
-        position: relative;
-        padding: 4px 8px;
-        transition: color 0.2s ease-in-out;
+      position: relative;
+      padding: 4px 8px;
+      transition: color 0.2s ease-in-out;
     }
     .nav-link:hover {
-        color: var(--accent-magenta);
+      color: var(--accent-magenta);
     }
     .nav-link::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        height: 2px;
-        background-color: var(--accent-magenta);
-        transition: width 0.3s ease;
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background-color: var(--accent-magenta);
+      transition: width 0.3s ease;
     }
     .nav-link:hover::after {
-        width: 100%;
+      width: 100%;
     }
     .split-text-char {
-        display: inline-block;
-        position: relative;
+      display: inline-block;
+      position: relative;
     }
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-        .proof-card {
-  /* Add a subtle halftone pattern to the card background */
-  background-image: radial-gradient(var(--text-primary) 0.5px, transparent 0);
-  background-size: 6px 6px;
-  background-position: 0 0;
-  
-  position: relative; /* Needed for the pseudo-element glow */
-  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
-  overflow: hidden; /* Keeps the glow effect contained */
-  z-index: 1;
-  align-self: stretch; /* Makes card fill the grid cell height */
-}
 
-/* Base styles for the ::before pseudo-element used for the glow */
-.proof-card::before {
-  content: '';
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200%; /* Make it large to create a soft, wide glow */
-  height: 200%;
-  filter: blur(60px);
-  opacity: 0;
-  transition: opacity 0.4s ease-in-out;
-  z-index: -1;
-}
+    /* --- PROOF CARD STYLES (FIXED) --- */
+    .proof-card {
+      background-image: radial-gradient(var(--text-primary) 0.5px, transparent 0);
+      background-size: 6px 6px;
+      background-position: 0 0;
+      position: relative; /* Establishes a stacking context */
+      transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+      overflow: hidden;
+      align-self: stretch;
+    }
+    /* NEW: This rule brings the card's direct children (header, icon div) to the front */
+    .proof-card > * {
+        position: relative;
+        z-index: 2;
+    }
+    .proof-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 50% 50%, var(--accent-lime), var(--accent-magenta));
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+      mix-blend-mode: soft-light;
+      z-index: 1; /* FIXED: Sits on top of the card's bg, but below the content */
+    }
+    
+    /* Specific gradients for inner glow based on hover class */
+    .proof-container.hover-magenta .proof-card::before {
+      background-image: radial-gradient(circle, var(--accent-magenta) 0%, var(--accent-lime) 100%);
+    }
+    .proof-container.hover-lime .proof-card::before {
+      background-image: radial-gradient(circle, var(--accent-lime) 0%, var(--accent-magenta) 100%);
+    }
 
-/* --- DEFINE GRADIENTS FOR EACH COLOR THEME --- */
-
-/* Magenta hover gets a magenta-dominant glow */
-.proof-container.hover-magenta .proof-card::before {
-  background-image: radial-gradient(circle, var(--accent-magenta) 0%, var(--accent-lime) 100%);
-}
-/* Lime hover gets a lime-dominant glow */
-.proof-container.hover-lime .proof-card::before {
-  background-image: radial-gradient(circle, var(--accent-lime) 0%, var(--accent-magenta) 100%);
-}
-
-/* The SVG Icon inside the card */
-.proof-card svg {
-    transition: transform 0.3s ease-out;
-}
-
-/* --- HOVER STATE --- */
-
-/* Generic hover transforms and icon scale for any proof container */
-.proof-container:hover .proof-card {
-  transform: translateY(-8px) rotate(-1.5deg);
-}
-.proof-container:hover .proof-card svg {
-    transform: scale(1.1);
-}
-
-/* Reveal glow on any hover */
-.proof-container:hover .proof-card::before {
-  opacity: 0.15; /* A subtle opacity for the background glow */
-}
-
-/* SPECIFIC hover shadow colors */
-.proof-container.hover-magenta:hover .proof-card {
-  box-shadow: 12px 12px 0px var(--accent-magenta);
-}
-
-.proof-container.hover-lime:hover .proof-card {
-  box-shadow: 12px 12px 0px var(--accent-lime);
-}
-        
->>>>>>> 11a9667f5611456c74228b846ce49a9d77d0de0c
-
-    /* --- REBUILT BOOK STYLES --- */
+    .proof-card svg {
+        transition: transform 0.3s ease-out;
+    }
+    .proof-container:hover .proof-card svg {
+        transform: scale(1.1);
+    }
+    .proof-container:hover .proof-card::before {
+      opacity: 0.25; /* Active opacity for the inner glow */
+    }
+    .proof-container.tilt-left:hover .proof-card {
+      transform: translateY(-8px) rotate(-1.5deg);
+    }
+    .proof-container.tilt-right:hover .proof-card {
+      transform: translateY(-8px) rotate(1.5deg);
+    }
+    .proof-container.hover-magenta:hover .proof-card {
+      box-shadow: 12px 12px 0px var(--accent-magenta);
+    }
+    .proof-container.hover-lime:hover .proof-card {
+      box-shadow: 12px 12px 0px var(--accent-lime);
+    }
+    
+    /* --- INTERACTIVE BOOK STYLES --- */
     .solution-left {
         perspective: 2500px;
     }
-
     .book-container {
         position: relative;
         width: 100%;
@@ -200,14 +183,12 @@ const GlobalStyles = () => (
         margin: 0 auto;
         transform-style: preserve-3d;
     }
-
     .book-cover, .book-page {
         position: absolute;
         inset: 0;
         transform-origin: left center;
         transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
     }
-
     .book-cover {
         border: 2px solid var(--text-primary);
         background-color: var(--text-primary);
@@ -219,32 +200,27 @@ const GlobalStyles = () => (
         padding: 2rem;
         cursor: pointer;
     }
-    
     .book-cover.is-open {
         transform: rotateY(-180deg);
     }
-
     .book-page {
-        inset: 6px 6px 6px 3px; /* Makes cover slightly larger */
+        inset: 6px 6px 6px 3px;
         border: 2px solid var(--text-primary);
         background-color: var(--bg-primary);
         box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     }
-
     .book-page.is-turned {
         transform: rotateY(-180deg);
     }
-
     .book-page.is-active {
-        transform: rotateY(0deg); /* No turn on active page */
+        transform: rotateY(0deg);
     }
-
     .page-tab {
         position: absolute;
-        right: -2px; /* To sit flush on the edge */
+        right: -2px;
         transform: translateX(100%) rotate(90deg) translateY(-100%);
         transform-origin: top left;
-        padding: 0.75rem 0; /* Vertical padding only */
+        padding: 0.75rem 0;
         border: 2px solid var(--text-primary);
         border-bottom: none;
         color: var(--text-primary);
@@ -254,16 +230,13 @@ const GlobalStyles = () => (
         text-align: center;
         transition: background-color 0.3s ease;
     }
-
     .book-page:hover .page-tab {
       background-color: var(--accent-lime) !important;
     }
-    
     .book-page:nth-of-type(1) .page-tab { top: 15%; width: 150px; }
     .book-page:nth-of-type(2) .page-tab { top: 35%; width: 120px; }
     .book-page:nth-of-type(3) .page-tab { top: 55%; width: 140px; }
     .book-page:nth-of-type(4) .page-tab { top: 75%; width: 130px; }
-
     .page-content {
       width: 100%;
       height: 100%;
@@ -274,7 +247,6 @@ const GlobalStyles = () => (
       padding: 1.5rem;
       text-align: center;
     }
-    
     .page-description {
         opacity: 0;
         transform: translateY(10px);
@@ -282,46 +254,42 @@ const GlobalStyles = () => (
         font-size: 1rem;
         margin-top: 1rem;
     }
-
     .book-page.is-active .page-description {
         opacity: 1;
         transform: translateY(0);
     }
-<<<<<<< HEAD
-        .footer-link {
-    position: relative;
-    transition: color 0.3s ease;
-}
-.footer-link:hover {
-    color: var(--accent-magenta);
-}
-.footer-link::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 1px;
-    background-color: var(--accent-magenta);
-    bottom: -2px;
-    left: 0;
-    transform: scaleX(0);
-    transform-origin: bottom right;
-    transition: transform 0.3s ease-out;
-}
-.footer-link:hover::after {
-    transform: scaleX(1);
-    transform-origin: bottom left;
-}
 
-.social-icon {
-    transition: transform 0.2s ease-out, color 0.2s ease-out;
-}
-.social-icon:hover {
-    transform: translateY(-3px);
-    color: var(--accent-lime);
-}
-=======
-
->>>>>>> 11a9667f5611456c74228b846ce49a9d77d0de0c
+    /* --- FOOTER LINK STYLES --- */
+    .footer-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .footer-link:hover {
+      color: var(--accent-magenta);
+    }
+    .footer-link::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      background-color: var(--accent-magenta);
+      bottom: -2px;
+      left: 0;
+      transform: scaleX(0);
+      transform-origin: bottom right;
+      transition: transform 0.3s ease-out;
+    }
+    .footer-link:hover::after {
+      transform: scaleX(1);
+      transform-origin: bottom left;
+    }
+    .social-icon {
+      transition: transform 0.2s ease-out, color 0.2s ease-out;
+    }
+    .social-icon:hover {
+      transform: translateY(-3px);
+      color: var(--accent-lime);
+    }
   `}</style>
 );
 
@@ -466,7 +434,7 @@ const BookComponent = () => {
                 className={`book-cover ${activePageIndex > -1 ? 'is-open' : ''}`}
                 style={{ zIndex: activePageIndex > -1 ? 1 : 100 }}
             >
-                <h3 className="font-headline text-4xl">The Four-Step Symphony of Ours</h3>
+                <h3 className="font-headline   text-4xl">The Four-Step Symphony of Ours</h3>
             </div>
             <div className="book-pages">
                 {services.map((service, index) => {
@@ -722,8 +690,8 @@ const LinkedInIcon = ({ className }) => (
             Proof in Every Pixel
         </h2>
 
-        {/* Proof Point 1: Fast & Scalable (Lime Text -> Magenta Hover) */}
-        <div className="proof-container group hover-magenta grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
+        {/* Proof Point 1: Fast & Scalable (Lime Text -> Magenta Hover, Card Left -> Tilt Left) */}
+        <div className="proof-container group hover-magenta tilt-left grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
             <div className="proof-card window-card flex flex-col">
                 <div className="window-header"><h3 className="font-ui window-title">01. Fast & Scalable</h3><WindowControls/></div>
                 <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
@@ -735,20 +703,20 @@ const LinkedInIcon = ({ className }) => (
                 <p className="text-lg leading-relaxed">
                     Ever waited for a website to load forever? Not on our watch. We engineer every solution for lightning-fast delivery and seamless scalability, ensuring your digital presence can handle anything you throw at it, today and tomorrow.
                 </p>
-                <p className="text-2xl font-extralight text-gray-600 font-ui">
+                <p className="text-base text-gray-600 font-ui">
                     Technology stack optimized for speed: React, Next.js, Cloudflare.
                 </p>
             </div>
         </div>
 
-        {/* Proof Point 2: Secure by Design (Magenta Text -> Lime Hover) */}
-        <div className="proof-container group hover-lime grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
+        {/* Proof Point 2: Secure by Design (Magenta Text -> Lime Hover, Card Right -> Tilt Right) */}
+        <div className="proof-container group hover-lime tilt-right grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
             <div className="space-y-4">
                 <h3 className="font-headline text-4xl text-[--accent-magenta]">Fort Knox Security</h3>
                 <p className="text-lg leading-relaxed">
                     Your data and your users' trust are paramount. Our "secure by design" philosophy means security is baked into every layer of your application, from initial concept to final deployment. Sleep easy knowing you're protected.
                 </p>
-                <p className="text-2xl font-extralight text-gray-600 font-ui">
+                <p className="text-base text-gray-600 font-ui">
                     Regular security audits, robust authentication, and data encryption.
                 </p>
             </div>
@@ -760,8 +728,8 @@ const LinkedInIcon = ({ className }) => (
             </div>
         </div>
 
-        {/* Proof Point 3: Modern UI/UX (Lime Text -> Magenta Hover) */}
-        <div className="proof-container group hover-magenta grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
+        {/* Proof Point 3: Modern UI/UX (Lime Text -> Magenta Hover, Card Left -> Tilt Left) */}
+        <div className="proof-container group hover-magenta tilt-left grid grid-cols-1 md:grid-cols-2 items-center gap-12 mb-20">
             <div className="proof-card window-card flex flex-col">
                 <div className="window-header"><h3 className="font-ui window-title">03. Modern UI/UX</h3><WindowControls/></div>
                 <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
@@ -773,27 +741,27 @@ const LinkedInIcon = ({ className }) => (
                 <p className="text-lg leading-relaxed">
                     Design isn't just about looks; it's about how it works. We craft interfaces that are a joy to use, intuitive to navigate, and stunning to behold. Elevate your brand with a user experience that captivates and converts.
                 </p>
-                <p className="text-2xl font-extralight text-gray-600 font-ui">
+                <p className="text-base text-gray-600 font-ui">
                     User-centered design principles, accessibility focus, modern aesthetics.
                 </p>
             </div>
         </div>
 
-        {/* Proof Point 4: Delivered Before Time (Magenta Text -> Lime Hover) */}
-        <div className="proof-container group hover-lime grid grid-cols-1 md:grid-cols-2 items-center gap-12">
+        {/* Proof Point 4: Delivered Before Time (Magenta Text -> Lime Hover, Card Right -> Tilt Right) */}
+        <div className="proof-container group hover-lime tilt-right grid grid-cols-1 md:grid-cols-2 items-center gap-12">
             <div className="space-y-4">
                 <h3 className="font-headline text-4xl text-[--accent-magenta]">On-Time. Every Time.</h3>
                 <p className="text-lg leading-relaxed">
                     Deadlines aren't just suggestions; they're commitments. Our streamlined agile processes and dedicated team ensure your project isn't just delivered, but delivered *before* you expect it, without compromising quality.
                 </p>
-                <p className="text-2xl font-extralight text-gray-600 font-ui">
+                <p className="text-base text-gray-600 font-ui">
                     Agile methodologies, clear communication, transparent progress tracking.
                 </p>
             </div>
             <div className="proof-card window-card flex flex-col">
                 <div className="window-header"><h3 className="font-ui window-title">04. Delivered Before Time</h3><WindowControls/></div>
                 <div className="p-6 md:p-8 flex-grow flex justify-center items-center">
-                    <BoltSVG className="w-32 h-32 md:w-40 md:h-40 md:mb-12 text-gray-800" />
+                    <BoltSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800 mb-12" />
                 </div>
             </div>
         </div>
