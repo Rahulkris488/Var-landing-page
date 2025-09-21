@@ -588,7 +588,7 @@ const AboutUs = () => {
 
     return (
         <section id="about-us" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
-            <div className="max-w-5xl mx-auto text-center">
+            <div className="max-w-5xl sd mx-auto text-center">
                 <h2 className="font-headline text-5xl md:text-7xl mb-16 about-us-headline">Meet The Founders</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
                     {teamMembers.map((member) => (
