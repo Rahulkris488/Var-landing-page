@@ -569,19 +569,19 @@ const AboutUs = () => {
         {
             name: "Rahul",
             title: "Co-Founder & Lead Developer",
-            bio: "The architectural mind behind our robust digital solutions. Vivek turns complex challenges into elegant, high-performance applications.",
-            imgSrc: "https://placehold.co/250x250/D4FF00/1A1A1A?text=R",
-            linkedin: "#",
-            gmail: "mailto:#",
+            bio: "The architectural mind behind our robust digital solutions. Rahul turns complex challenges into elegant, high-performance applications.",
+            imgSrc: "src/assets/rahul.png",
+            linkedin: "https://www.linkedin.com/in/rahul-krishna-tp",
+            gmail: "mailto:rahulkrishnatp12@gmail.com",
             bgColor: "bg-lime-200"
         },
         {
             name: "Vivek",
             title: "Co-Founder & Creative Director",
-            bio: "The visionary force behind our creative strategies, Rahul blends artistry with analytics to craft compelling brand narratives that resonate and inspire.",
-            imgSrc: "https://placehold.co/250x250/FF00DD/1A1A1A?text=V",
-            linkedin: "#",
-            gmail: "mailto:#",
+            bio: "The visionary force behind our creative strategies, Vivek blends artistry with analytics to craft compelling brand narratives that resonate and inspire.",
+            imgSrc: "src/assets/vivek.png",
+            linkedin: "https://www.linkedin.com/in/vivek-sathish-poojary",
+            gmail: "mailto:viveksathishpoojary@gmail.com",
             bgColor: "bg-fuchsia-200"
         }
     ];
@@ -937,7 +937,7 @@ React.useLayoutEffect(() => {
             <div className="proof-card window-card flex flex-col">
                 <div className="window-header"><h3 className="font-ui window-title">04. Delivered Before Time</h3><WindowControls/></div>
                 <div className="p-6 md:p-8 flex-grow flex justify-center items-center h-48 md:h-auto">
-                    <BoltSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
+                    <BoltSVG className="w-32 h-32 mb-14 md:w-40 md:h-40 text-gray-800" />
                 </div>
             </div>
         </div>
@@ -970,14 +970,17 @@ React.useLayoutEffect(() => {
                 </div>
             </div>
              <div className="text-center mt-16">
-                <a href="https://var-project-request-ef75.vercel.app/" target="_blank" rel="noopener noreferrer" className="press-effect btn-lime font-ui text-xl md:text-2xl p-4 px-8 inline-block">Request a Quote</a>
-            </div>
+  <a href="#closing" className="press-effect btn-lime font-ui text-xl md:text-2xl p-4 px-8 inline-block">
+    Request a Quote
+  </a>
+</div>
+
         </section>
 
         <section id="closing" className="min-h-screen bg-[--text-primary] text-[--bg-primary] flex flex-col justify-center items-center text-center p-4 md:p-8">
             <h2 className="closing-headline font-headline text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-[--bg-primary] leading-snug">Your vision. Our code. Together,we    build the future.</h2>
              <div className="mt-12">
-                 <a href="https://var-project-request-ef75.vercel.app/" target="_blank" rel="noopener noreferrer" className="press-effect bg-[--accent-lime] text-[--text-primary] font-ui text-2xl sm:text-3xl p-4 sm:p-6 hover:bg-[--bg-primary] hover:text-[--accent-lime] inline-block">
+                 <a href="https://var-contact-us.vercel.app/" target="_blank" rel="noopener noreferrer" className="press-effect bg-[--accent-lime] text-[--text-primary] font-ui text-2xl sm:text-3xl p-4 sm:p-6 hover:bg-[--bg-primary] hover:text-[--accent-lime] inline-block">
                     <span className="btn-arrow-icon mr-2">→</span> Let’s Talk
                 </a>
             </div>
@@ -1019,13 +1022,7 @@ React.useLayoutEffect(() => {
                 </ul>
             </div>
             
-            <div>
-                <h4 className="font-ui text-2xl mb-4 text-black">Legal</h4>
-                <ul className="space-y-3">
-                    <li><a href="#" className="font-ui text-lg footer-link">Privacy Policy</a></li>
-                    <li><a href="#" className="font-ui text-lg footer-link">Terms of Service</a></li>
-                </ul>
-            </div>
+
 
         </div>
         
