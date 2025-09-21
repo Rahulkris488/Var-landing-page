@@ -1,10 +1,12 @@
 import React from 'react';
 
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/dist/ScrollTrigger.js'; // Note the .js extension
-import { TextPlugin } from 'gsap/dist/TextPlugin.js'; // Note the .js extension
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { TextPlugin } from "gsap/TextPlugin";
 
+// Register plugins
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
+
 // NOTE: This component is designed to work with GSAP and its plugins loaded globally
 // via <script> tags in your main HTML file. This avoids potential bundling issues
 // and is a reliable method for this setup.
