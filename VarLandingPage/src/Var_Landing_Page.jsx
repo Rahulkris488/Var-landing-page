@@ -1,7 +1,12 @@
 import React from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { TextPlugin } from 'gsap/TextPlugin';
+
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { TextPlugin } from "gsap/TextPlugin";
+
+// Register plugins
+gsap.registerPlugin(ScrollTrigger, TextPlugin);
+
 // NOTE: This component is designed to work with GSAP and its plugins loaded globally
 // via <script> tags in your main HTML file. This avoids potential bundling issues
 // and is a reliable method for this setup.
@@ -10,7 +15,7 @@ const GlobalStyles = () => (
     @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
     :root {
       --bg-primary: #F7F5F0;
-      --text-primary: #1A1A1A;
+      --text-primary: #1A1A1A; 
       --accent-lime: #D4FF00;
       --accent-magenta: #FF00DD;
       --accent-cyan: #00E0FF;
@@ -588,7 +593,7 @@ const AboutUs = () => {
 
     return (
         <section id="about-us" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
-            <div className="max-w-5xl mx-auto text-center">
+            <div className="max-w-5xl sd mx-auto text-center">
                 <h2 className="font-headline text-5xl md:text-7xl mb-16 about-us-headline">Meet The Founders</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
                     {teamMembers.map((member) => (
