@@ -571,7 +571,7 @@ const AboutUs = () => {
         {
             name: "Rahul",
             title: "Co-Founder & Lead Developer",
-            bio: "The architectural mind behind our robust digital solutions. Vivek turns complex challenges into elegant, high-performance applications.",
+            bio: "The architectural mind behind our robust digital solutions. Rahul turns complex challenges into elegant, high-performance applications.",
             imgSrc: "https://placehold.co/250x250/D4FF00/1A1A1A?text=R",
             linkedin: "#",
             gmail: "mailto:#",
@@ -580,7 +580,7 @@ const AboutUs = () => {
         {
             name: "Vivek",
             title: "Co-Founder & Creative Director",
-            bio: "The visionary force behind our creative strategies, Rahul blends artistry with analytics to craft compelling brand narratives that resonate and inspire.",
+            bio: "The visionary force behind our creative strategies, Vivek blends artistry with analytics to craft compelling brand narratives that resonate and inspire.",
             imgSrc: "https://placehold.co/250x250/FF00DD/1A1A1A?text=V",
             linkedin: "#",
             gmail: "mailto:#",
@@ -998,13 +998,7 @@ const LinkedInIcon = ({ className }) => (
                 </ul>
             </div>
             
-            <div>
-                <h4 className="font-ui text-2xl mb-4 text-black">Legal</h4>
-                <ul className="space-y-3">
-                    <li><a href="#" className="font-ui text-lg footer-link">Privacy Policy</a></li>
-                    <li><a href="#" className="font-ui text-lg footer-link">Terms of Service</a></li>
-                </ul>
-            </div>
+
 
         </div>
         
