@@ -575,7 +575,7 @@ const AboutUs = () => {
             name: "Rahul",
             title: "Co-Founder & Lead Developer",
             bio: "The architectural mind behind our robust digital solutions. Rahul turns complex challenges into elegant, high-performance applications.",
-            imgSrc: "src/assets/rahul.png",
+            imgSrc: "https://res.cloudinary.com/dstrhh3zd/image/upload/v1758560436/rahul_seyrfp.webp",
             linkedin: "https://www.linkedin.com/in/rahul-krishna-tp",
             gmail: "mailto:rahulkrishnatp12@gmail.com",
             bgColor: "bg-lime-200"
@@ -584,7 +584,7 @@ const AboutUs = () => {
             name: "Vivek",
             title: "Co-Founder & Creative Director",
             bio: "The visionary force behind our creative strategies, Vivek blends artistry with analytics to craft compelling brand narratives that resonate and inspire.",
-            imgSrc: "src/assets/vivek.png",
+            imgSrc: "https://res.cloudinary.com/dstrhh3zd/image/upload/v1758560437/vivek_k5p2il.webp",
             linkedin: "https://www.linkedin.com/in/vivek-sathish-poojary",
             gmail: "mailto:viveksathishpoojary@gmail.com",
             bgColor: "bg-fuchsia-200"
