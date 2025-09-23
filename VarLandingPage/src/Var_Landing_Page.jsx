@@ -1006,9 +1006,9 @@ React.useLayoutEffect(() => {
     <div className="absolute inset-0 halftone-bg opacity-30"></div>
     <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center max-w-7xl mx-auto mt-24 lg:mt-0">
         <div className="relative z-10 space-y-6 text-center lg:text-left">
-            <div className="hero-card window-card p-6 md:p-8">
+            <div className="hero-card window-card p-6 md:p-8 lg:mt-10">
             
-<h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-6xl leading-tight ">
+<h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-6xl  leading-tight ">
     <span className="block headline-line">Every business</span>
     <span className="block headline-line">deserves a digital</span>
     <span className="block headline-line">presence that</span>
