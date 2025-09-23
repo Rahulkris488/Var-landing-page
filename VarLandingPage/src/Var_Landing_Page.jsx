@@ -729,7 +729,9 @@ React.useEffect(() => {
     let rafId;
 
     function raf(time) {
-        lenis.raf(time);
+        if (lenis) {
+            lenis.raf(time);
+        }
         rafId = requestAnimationFrame(raf);
     }
 
@@ -770,13 +772,22 @@ React.useLayoutEffect(() => {
         const heroLines = mainRef.current.querySelectorAll(".headline-line");
         heroLines.forEach(line => {
             const text = line.textContent.trim();
-            line.innerHTML = '';
-            text.split('').forEach(char => {
-                const span = document.createElement('span');
-                span.className = 'split-text-char';
-                span.innerHTML = char === ' ' ? '&nbsp;' : char;
-                span.style.display = 'inline-block';
-                line.appendChild(span);
+            const words = text.split(/\s+/);
+            line.innerHTML = ''; // Clear the line
+
+            words.forEach(word => {
+                const wordWrapper = document.createElement('span');
+                wordWrapper.style.display = 'inline-block';
+                wordWrapper.style.marginRight = '0.2em'; // Adjust spacing between words
+
+                word.split('').forEach(char => {
+                    const charSpan = document.createElement('span');
+                    charSpan.className = 'split-text-char';
+                    charSpan.style.display = 'inline-block';
+                    charSpan.textContent = char;
+                    wordWrapper.appendChild(charSpan);
+                });
+                line.appendChild(wordWrapper);
             });
         });
         
@@ -832,8 +843,24 @@ React.useLayoutEffect(() => {
 
         const philosophyLines = mainRef.current.querySelectorAll(".philosophy-line");
         philosophyLines.forEach(line => {
-             const text = line.textContent.trim();
-             line.innerHTML = text.split('').map(char => `<span class="split-text-char" style="display:inline-block;">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
+            const text = line.textContent.trim();
+            const words = text.split(/\s+/);
+            line.innerHTML = '';
+
+            words.forEach(word => {
+                const wordWrapper = document.createElement('span');
+                wordWrapper.style.display = 'inline-block';
+                wordWrapper.style.marginRight = '0.25em'; 
+
+                word.split('').forEach(char => {
+                    const charSpan = document.createElement('span');
+                    charSpan.className = 'split-text-char';
+                    charSpan.style.display = 'inline-block';
+                    charSpan.textContent = char;
+                    wordWrapper.appendChild(charSpan);
+                });
+                line.appendChild(wordWrapper);
+            });
         });
         gsap.from(".philosophy-line .split-text-char", {
           scrollTrigger: { trigger: "#philosophy", start: "top 70%" }, 
@@ -899,16 +926,33 @@ React.useLayoutEffect(() => {
             opacity: 0, y: 50, duration: 0.8, ease: 'power3.out'
         });
         
-        const closingLines = mainRef.current.querySelectorAll(".closing-headline");
-        closingLines.forEach(line => {
-             const text = line.textContent.trim();
-             line.innerHTML = text.split('').map(char => `<span class="split-text-char" style="display:inline-block;">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
-        });
-        gsap.from(".closing-headline .split-text-char", {
-            opacity: 0, scaleY: 0, y: -50, transformOrigin: "top", stagger: 0.03,
-            duration: 0.8, ease: 'power3.out',
-            scrollTrigger: { trigger: "#closing", start: "top 60%" }
-        });
+        const closingHeadline = mainRef.current.querySelector(".closing-headline");
+        if (closingHeadline) {
+          const originalText = closingHeadline.textContent.trim();
+          const words = originalText.split(/\s+/); // Split by any whitespace
+          closingHeadline.innerHTML = ''; // Clear the element
+
+          words.forEach(word => {
+            const wordWrapper = document.createElement('span');
+            wordWrapper.style.display = 'inline-block';
+            wordWrapper.style.marginRight = '0.2em'; // Adjust spacing between words as needed
+
+            word.split('').forEach(char => {
+              const charSpan = document.createElement('span');
+              charSpan.className = 'split-text-char';
+              charSpan.style.display = 'inline-block';
+              charSpan.textContent = char;
+              wordWrapper.appendChild(charSpan);
+            });
+            closingHeadline.appendChild(wordWrapper);
+          });
+
+          gsap.from(".closing-headline .split-text-char", {
+              opacity: 0, scaleY: 0, y: -50, transformOrigin: "top", stagger: 0.03,
+              duration: 0.8, ease: 'power3.out',
+              scrollTrigger: { trigger: "#closing", start: "top 60%" }
+          });
+        }
 
         // --- CLOSING BUTTON ANIMATION ---
         gsap.from("#closing .press-effect", {
