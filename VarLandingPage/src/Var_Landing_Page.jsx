@@ -1,17 +1,15 @@
 import React from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { TextPlugin } from 'gsap/TextPlugin';
+import Lenis from 'lenis';
+// NOTE: GSAP and its plugins are loaded via <script> tags in your main HTML file.
+// Lenis for smooth scrolling should be loaded the same way.
+// This is a reliable method for this setup and avoids potential bundling issues.
 
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { TextPlugin } from "gsap/TextPlugin";
-
-// Register plugins
-gsap.registerPlugin(ScrollTrigger, TextPlugin);
-
-// NOTE: This component is designed to work with GSAP and its plugins loaded globally
-// via <script> tags in your main HTML file. This avoids potential bundling issues
-// and is a reliable method for this setup.
 const GlobalStyles = () => (
  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Anton&family=VT323&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
     :root {
       --bg-primary: #F7F5F0;
@@ -21,18 +19,19 @@ const GlobalStyles = () => (
       --accent-cyan: #00E0FF;
       --accent-orange: #FF7A00;
     }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: initial !important; /* Important for Lenis */ }
     body {
       background-color: var(--bg-primary);
       color: var(--text-primary);
       overflow-x: hidden;
     }
-   .font-headline {
-  font-family: 'Anton', sans-serif;
-  text-transform: uppercase;
-  -webkit-text-stroke: 1px var(--text-primary);
-  text-stroke: 1px var(--text-primary);
-}
+    .font-headline {
+        font-family: 'Anton', sans-serif;
+        text-transform: uppercase;
+        -webkit-text-stroke: 1px var(--text-primary);
+        text-stroke: 1px var(--text-primary);
+        color: var(--text-primary); /* FIX: Was 'transparent' */
+    }
     .font-ui { font-family: 'VT323', monospace; }
     .font-signature {
       font-family: 'Caveat', cursive;
@@ -80,22 +79,7 @@ const GlobalStyles = () => (
     .btn-lime:hover { background-color: var(--text-primary); color: var(--accent-lime); }
     .btn-arrow-icon { transition: transform 0.2s ease-in-out; display: inline-block; }
     .press-effect:hover .btn-arrow-icon { transform: translateX(5px); }
-    .terminal-window {
-      background-color: var(--text-primary);
-      border: 2px solid var(--text-primary);
-      box-shadow: 8px 8px 0px var(--text-primary);
-      position: relative;
-    }
-    .terminal-window::after {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-      z-index: 2; background-size: 100% 4px, 6px 100%; pointer-events: none;
-      animation: scanlines 2s linear infinite;
-    }
-    @keyframes scanlines {
-      0% { background-position: 0 0; }
-      100% { background-position: 0 100%; }
-    }
+    
     .nav-link {
       position: relative;
       padding: 4px 8px;
@@ -122,6 +106,30 @@ const GlobalStyles = () => (
       display: inline-block;
       position: relative;
     }
+
+    /* --- PROBLEM SECTION (COMIC BOOK) STYLES --- */
+    #problem {
+        overflow: hidden;
+    }
+    .problem-panels-container {
+        width: 300%; /* 100vw * 3 panels */
+        will-change: transform;
+    }
+    .problem-panel {
+        width: 100vw;
+        height: 100vh;
+        max-height: 800px; /* Cap height on large screens */
+    }
+    .comic-panel-card {
+        border: 3px solid var(--text-primary);
+        box-shadow: 10px 10px 0 var(--accent-cyan);
+        transform: rotate(-1deg);
+        height: 100%;
+    }
+    .comic-panel-card svg {
+        filter: drop-shadow(5px 5px 0px rgba(0,0,0,0.1));
+    }
+
 
     /* --- PROOF CARD STYLES --- */
     .proof-card {
@@ -329,7 +337,7 @@ const Navbar = () => {
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl p-3 z-50 bg-white/20 backdrop-blur-lg rounded-xl border border-white/30 shadow-lg font-ui">
       <div className="container mx-auto flex justify-between items-center relative">
-        <a href="#hero" className="font-headline text-2xl sm:text-3xl text-black">VAR</a>
+        <a href="#hero" className="font-headline text-2xl sm:text-3xl" style={{WebkitTextStroke: '0px'}}>VAR</a>
         <div className="hidden md:flex items-center space-x-4 lg:space-x-8 text-base sm:text-lg">
           <a href="#hero" className="nav-link">Home</a>
           <a href="#about-us" className="nav-link">About</a>
@@ -416,6 +424,60 @@ const GridPattern = ({ className }) => (
             </pattern>
         </defs>
         <rect width="200" height="200" fill="url(#smallGrid)" />
+    </svg>
+);
+
+// --- NEW SVGS FOR PROBLEM SECTION ---
+const OutdatedWebsiteSVG = ({className}) => (
+    <svg className={className} viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="20" width="160" height="110" rx="8" stroke="var(--text-primary)" strokeWidth="4" fill="var(--bg-primary)"/>
+        <path d="M20 45H180" stroke="var(--text-primary)" strokeWidth="4"/>
+        <circle cx="35" cy="32.5" r="4" fill="var(--text-primary)"/>
+        <circle cx="50" cy="32.5" r="4" fill="var(--text-primary)"/>
+        <path d="M70 65H130" stroke="var(--text-primary)" strokeWidth="3" strokeLinecap="round"/>
+        <rect x="40" y="80" width="50" height="30" fill="#E0E0E0" stroke="var(--text-primary)" strokeWidth="2"/>
+        <path d="M45 85 L 55 95 M 55 85 L 45 95" stroke="var(--text-primary)" strokeWidth="2"/>
+        <path d="M100 85H140" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M100 95H130" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M100 105H140" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round"/>
+        <g className="cobwebs">
+            <path d="M178 22L160 40" stroke="var(--text-primary)" strokeWidth="1.5"/>
+            <path d="M178 22C170 25 165 32 160 40" stroke="var(--text-primary)" strokeWidth="1" fill="none"/>
+            <path d="M178 22C174 29 168 36 160 40" stroke="var(--text-primary)" strokeWidth="1" fill="none"/>
+        </g>
+        <g className="glitch-line">
+            <path d="M30 90 H 170" stroke="var(--accent-magenta)" strokeWidth="2"/>
+        </g>
+    </svg>
+);
+
+const SlowAppSVG = ({className}) => (
+    <svg className={className} viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 20 L120 50 L100 80 L80 50 Z" stroke="var(--text-primary)" strokeWidth="4" fill="var(--bg-primary)"/>
+        <circle cx="100" cy="50" r="5" fill="var(--text-primary)"/>
+        <g className="loading-spinner" transform="translate(100, 50)">
+            <circle cx="0" cy="0" r="20" stroke="var(--accent-cyan)" strokeWidth="3" strokeDasharray="80 20" strokeLinecap="round"/>
+        </g>
+        <path d="M100 80 V 130" stroke="var(--text-primary)" strokeWidth="3" strokeDasharray="5 5"/>
+        <g className="snail">
+            <path d="M80 130 C 60 130 60 110 80 110 C 100 110 100 130 120 130 Z" stroke="var(--text-primary)" strokeWidth="3" fill="var(--accent-orange)"/>
+            <path d="M75 110 C 70 100 85 100 80 110" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round"/>
+        </g>
+    </svg>
+);
+
+const ConfusingDesignSVG = ({className}) => (
+    <svg className={className} viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 30 L150 30 L180 80 L20 80 Z" stroke="var(--text-primary)" strokeWidth="4" fill="var(--bg-primary)"/>
+        <path d="M80 80 L120 120 L100 80" stroke="var(--text-primary)" strokeWidth="4" fill="var(--bg-primary)"/>
+        <path d="M40 100 L70 90 L60 120 Z" stroke="var(--text-primary)" strokeWidth="4" fill="var(--bg-primary)"/>
+        <path className="arrow-1" d="M30 40 C 80 10, 120 50, 90 70" stroke="var(--accent-magenta)" strokeWidth="3" strokeDasharray="4 4" fill="none"/>
+        <path className="arrow-2" d="M170 50 C 100 130, 80 60, 140 100" stroke="var(--accent-lime)" strokeWidth="3" strokeDasharray="4 4" fill="none"/>
+        <path className="arrow-3" d="M60 110 C 10 90, 180 90, 140 120" stroke="var(--accent-cyan)" strokeWidth="3" strokeDasharray="4 4" fill="none"/>
+        <g className="question-mark">
+            <path d="M100 50 C 100 40, 110 40, 110 50 C 110 60, 100 60, 100 65 V 70" stroke="var(--text-primary)" strokeWidth="4" strokeLinecap="round"/>
+            <circle cx="100" cy="75" r="3" fill="var(--text-primary)"/>
+        </g>
     </svg>
 );
 
@@ -526,7 +588,7 @@ const BookComponent = () => {
                 style={{ zIndex: activePageIndex > -1 ? 1 : 100 }}
             >
                 <div className="book-face book-face--front">
-                     <h3 className="font-headline text-4xl">The Four-Step Symphony of Ours</h3>
+                     <h3 className="font-headline text-4xl" style={{color: 'var(--bg-primary)', WebkitTextStroke: '0px'}}>The Four-Step Symphony of Ours</h3>
                 </div>
                 <div className="book-face book-face--back"></div>
             </div>
@@ -548,7 +610,7 @@ const BookComponent = () => {
                                 </div>
                                 <div className="page-content space-y-4">
                                     {service.illustration}
-                                    <h3 className="font-headline text-3xl">{service.headline}</h3>
+                                    <h3 className="font-headline text-3xl" style={{color: 'var(--text-primary)', WebkitTextStroke: '0px'}}>{service.headline}</h3>
                                     <p className="page-description font-ui px-4">{service.description}</p>
                                 </div>
                            </div>
@@ -575,7 +637,7 @@ const AboutUs = () => {
             name: "Rahul",
             title: "Co-Founder & Lead Developer",
             bio: "The architectural mind behind our robust digital solutions. Rahul turns complex challenges into elegant, high-performance applications.",
-            imgSrc: "https://res.cloudinary.com/dstrhh3zd/image/upload/v1758560436/rahul_seyrfp.webp",
+            imgSrc: "https://res.cloudinary.com/dstrhh3zd/image/upload/v1718560436/rahul_seyrfp.webp",
             linkedin: "https://www.linkedin.com/in/rahul-krishna-tp",
             gmail: "mailto:rahulkrishnatp12@gmail.com",
             bgColor: "bg-lime-200"
@@ -584,7 +646,7 @@ const AboutUs = () => {
             name: "Vivek",
             title: "Co-Founder & Creative Director",
             bio: "The visionary force behind our creative strategies, Vivek blends artistry with analytics to craft compelling brand narratives that resonate and inspire.",
-            imgSrc: "https://res.cloudinary.com/dstrhh3zd/image/upload/v1758560437/vivek_k5p2il.webp",
+            imgSrc: "https://res.cloudinary.com/dstrhh3zd/image/upload/v1718560437/vivek_k5p2il.webp",
             linkedin: "https://www.linkedin.com/in/vivek-sathish-poojary",
             gmail: "mailto:viveksathishpoojary@gmail.com",
             bgColor: "bg-fuchsia-200"
@@ -635,7 +697,34 @@ const LinkedInIcon = ({ className }) => (
 );
   const mainRef = React.useRef(null);
 
+React.useEffect(() => {
+    // --- SMOOTH SCROLL SETUP ---
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js';
+    script.async = true;
+
+    script.onload = () => {
+        if (window.Lenis) {
+            const lenis = new window.Lenis();
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+        }
+    };
+    document.body.appendChild(script);
+
+    return () => {
+        const existingScript = document.querySelector(`script[src="${script.src}"]`);
+        if (existingScript) {
+            document.body.removeChild(existingScript);
+        }
+    };
+}, []);
+
 React.useLayoutEffect(() => {
+    // --- GSAP SETUP ---
     const gsap = window.gsap;
     const ScrollTrigger = window.ScrollTrigger;
     const TextPlugin = window.TextPlugin;
@@ -647,32 +736,27 @@ React.useLayoutEffect(() => {
 
     gsap.registerPlugin(ScrollTrigger, TextPlugin);
     
-    // NOTE: The old splitText function is removed as we now handle it directly below.
-
     const ctx = gsap.context(() => {
         gsap.from("header", { y: -100, opacity: 0, duration: 1, ease: 'power3.out', delay: 0.5 });
         
-        // --- START OF UPDATED HERO ANIMATION LOGIC ---
         const heroLines = mainRef.current.querySelectorAll(".headline-line");
-        
         heroLines.forEach(line => {
             const text = line.textContent.trim();
-            line.innerHTML = ''; // Clear the line
+            line.innerHTML = '';
             text.split('').forEach(char => {
                 const span = document.createElement('span');
                 span.className = 'split-text-char';
                 span.innerHTML = char === ' ' ? '&nbsp;' : char;
-                span.style.display = 'inline-block'; // Important for transforms
+                span.style.display = 'inline-block';
                 line.appendChild(span);
             });
         });
         
-        const allChars = mainRef.current.querySelectorAll('.split-text-char');
+        const allChars = mainRef.current.querySelectorAll('.headline-line .split-text-char');
         gsap.from(allChars, {
             opacity: 0, y: 50, rotateX: -90, stagger: 0.02,
             duration: 1, ease: 'power3.out', delay: 1,
         });
-        // --- END OF UPDATED HERO ANIMATION LOGIC ---
         
         gsap.from(".hero-subtext", { y: '100%', opacity: 0, duration: 1, ease: 'power3.out', delay: 1.5 });
         gsap.from(".hero-cta", { opacity: 0, scale: 0.8, duration: 1, ease: 'elastic.out(1, 0.75)', delay: 2 });
@@ -681,23 +765,49 @@ React.useLayoutEffect(() => {
         gsap.to(".bot-waving-arm", { rotation: 25, transformOrigin: 'bottom right', repeat: -1, yoyo: true, duration: 0.8, ease: 'power1.inOut' });
         gsap.to(".bot-eye", { scaleY: 0.1, transformOrigin: 'center center', repeat: -1, yoyo: true, repeatDelay: 3, duration: 0.1 });
 
-        const tlTerminal = gsap.timeline({ scrollTrigger: { trigger: "#problem", start: "top 70%", toggleActions: "play none none reverse" } });
-        tlTerminal.fromTo(".terminal-window", {opacity: 0.5, scale: 0.98}, {opacity: 1, scale: 1, duration: 0.3, ease: 'power2.out'})
-          .to("#terminal-text-1", { duration: 1.5, text: "Outdated websites lose trust.", ease: "none" })
-          .to("#terminal-text-2", { duration: 1.5, text: "Slow apps lose customers.", ease: "none" })
-          .to("#terminal-text-3", { duration: 2, text: "Poor design loses opportunities.", ease: "none" })
-          .fromTo("#terminal-cursor", { autoAlpha: 0 }, { autoAlpha: 1, repeat: -1, yoyo: true, duration: 0.5 }, "-=2");
+        // --- HERO STICKERS PARALLAX ---
+        gsap.to(".hero-sticker", {
+            y: (i, target) => ScrollTrigger.maxScroll(window) * (parseFloat(target.dataset.speed) || 0.1 * (i + 1)),
+            ease: "none",
+            scrollTrigger: {
+                start: "top top",
+                end: "bottom top",
+                scrub: 1.5
+            }
+        });
+
+        // --- PROBLEM SECTION ANIMATION ---
+        const panels = gsap.utils.toArray(".problem-panel");
+        gsap.to(panels, {
+            xPercent: -100 * (panels.length - 1),
+            ease: "none",
+            scrollTrigger: {
+                trigger: "#problem",
+                pin: true,
+                scrub: 1,
+                snap: 1 / (panels.length - 1),
+                end: () => "+=" + (mainRef.current.querySelector(".problem-panels-container").offsetWidth - window.innerWidth)
+            }
+        });
         
-        // The rest of your animations remain the same...
+        gsap.from(".comic-panel-card", {
+           scrollTrigger: {
+               trigger: "#problem",
+               start: "top 80%",
+               toggleActions: "play none none reverse",
+           },
+           opacity: 0,
+           y: 100,
+           duration: 1,
+           ease: 'power3.out'
+        });
+
         const philosophyLines = mainRef.current.querySelectorAll(".philosophy-line");
-        const philosophyChars = [];
         philosophyLines.forEach(line => {
              const text = line.textContent.trim();
              line.innerHTML = text.split('').map(char => `<span class="split-text-char" style="display:inline-block;">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
-             philosophyChars.push(...line.children);
         });
-
-        gsap.from(philosophyChars, {
+        gsap.from(".philosophy-line .split-text-char", {
           scrollTrigger: { trigger: "#philosophy", start: "top 70%" }, 
           opacity: 0, y: 20, stagger: { amount: 0.5, from: "random" }, duration: 0.8, ease: 'power2.out'
         });
@@ -730,30 +840,57 @@ React.useLayoutEffect(() => {
             opacity: 0, y: 50, duration: 1, ease: 'elastic.out(1, 0.5)'
         });
         
+        // --- PROOF SECTION TEXT ANIMATION ---
+        gsap.utils.toArray(".proof-container").forEach(container => {
+            gsap.from(container.querySelectorAll(".space-y-4 > *"), {
+                scrollTrigger: {
+                    trigger: container,
+                    start: "top 70%",
+                    toggleActions: "play none none reverse",
+                },
+                opacity: 0,
+                x: -30,
+                stagger: 0.15,
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+        });
+
         gsap.from(".pricing-card", {
             scrollTrigger: { trigger: "#pricing", start: "top 70%", toggleActions: "play none none reverse" },
             opacity: 0, filter: 'blur(10px)', stagger: 0.2, duration: 1, ease: 'power2.out'
         });
+
+        // --- PRICING STICKER & BUTTON ANIMATIONS ---
+        gsap.from(".best-value-sticker", {
+            scrollTrigger: { trigger: ".best-value-sticker", start: "top 80%", toggleActions: "play none none reverse" },
+            scale: 0, rotation: -45, opacity: 0, duration: 1, ease: "elastic.out(1, 0.5)"
+        });
+        gsap.from("#pricing .press-effect", {
+            scrollTrigger: { trigger: "#pricing .press-effect", start: "top 90%", toggleActions: "play none none reverse" },
+            opacity: 0, y: 50, duration: 0.8, ease: 'power3.out'
+        });
         
         const closingLines = mainRef.current.querySelectorAll(".closing-headline");
-        const closingChars = [];
         closingLines.forEach(line => {
              const text = line.textContent.trim();
              line.innerHTML = text.split('').map(char => `<span class="split-text-char" style="display:inline-block;">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
-             closingChars.push(...line.children);
         });
-
-        gsap.from(closingChars, {
+        gsap.from(".closing-headline .split-text-char", {
             opacity: 0, scaleY: 0, y: -50, transformOrigin: "top", stagger: 0.03,
             duration: 0.8, ease: 'power3.out',
             scrollTrigger: { trigger: "#closing", start: "top 60%" }
         });
+
+        // --- CLOSING BUTTON ANIMATION ---
+        gsap.from("#closing .press-effect", {
+            scrollTrigger: { trigger: "#closing .press-effect", start: "top 90%", toggleActions: "play none none reverse" },
+            opacity: 0, scale: 0.8, duration: 1, ease: 'elastic.out(1, 0.75)'
+        });
         
         gsap.to(".deco-grid", {
             y: "-200px",
-            scrollTrigger: {
-                trigger: "#solution", start: "top bottom", end: "bottom top", scrub: 1.5
-            }
+            scrollTrigger: { trigger: "#solution", start: "top bottom", end: "bottom top", scrub: 1.5 }
         });
         
         gsap.from(".about-us-headline", {
@@ -771,6 +908,16 @@ React.useLayoutEffect(() => {
             opacity: 0, scale: 0.5, rotation: -45, duration: 1, ease: 'elastic.out(1, 0.75)', delay: 0.5
         });
 
+        // --- FOOTER ANIMATIONS ---
+        gsap.from("#footer .grid > div", {
+            scrollTrigger: { trigger: "#footer", start: "top 85%", toggleActions: "play none none reverse" },
+            opacity: 0, y: 40, duration: 0.8, stagger: 0.2, ease: "power2.out"
+        });
+        gsap.from("#footer .border-t", {
+             scrollTrigger: { trigger: "#footer", start: "top 70%", toggleActions: "play none none reverse" },
+            opacity: 0, y: 20, duration: 1, ease: "power2.out"
+        });
+
     }, mainRef);
 
     return () => ctx.revert();
@@ -781,7 +928,7 @@ React.useLayoutEffect(() => {
       <GlobalStyles />
       <Navbar />
       <div className="paper-texture"></div>
-      <main ref={mainRef} className="bg-[--bg-primary] text-[--text-primary] font-['Inter'] selection:bg-[--accent-lime] selection:text-[--text-primary]">
+      <main ref={mainRef} className="bg-[--bg-primary] text-[--text-primary] selection:bg-[--accent-lime] selection:text-[--text-primary]">
         
 <section id="hero" className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">
     <div className="absolute inset-0 halftone-bg opacity-30"></div>
@@ -798,7 +945,7 @@ React.useLayoutEffect(() => {
 </h1>
             </div>
             <div className="hero-card window-card p-4 md:p-6 lg:ml-12 overflow-hidden">
-                <p className="hero-subtext text-lg md:text-xl">
+                <p className="hero-subtext text-lg md:text-xl font-ui">
                     At VAR, we don’t just build websites. We craft digital experiences.
                 </p>
             </div>
@@ -812,34 +959,55 @@ React.useLayoutEffect(() => {
             <VarBotWaving className="var-bot-hero w-[250px] h-[333px] sm:w-[300px] sm:h-[400px] z-20 drop-shadow-lg"/>
         </div>
     </div>
-    <div className="hero-sticker absolute top-[15%] left-[5%] sm:left-[10%] w-16 h-16 bg-[--accent-magenta] rotate-[-15deg]"></div>
-    <svg className="hero-sticker absolute bottom-[20%] right-[5%] w-20 h-20 rotate-[25deg]" viewBox="0 0 100 100">
+    <div data-speed="0.1" className="hero-sticker absolute top-[15%] left-[5%] sm:left-[10%] w-16 h-16 bg-[--accent-magenta] rotate-[-15deg]"></div>
+    <svg data-speed="-0.15" className="hero-sticker absolute bottom-[20%] right-[5%] w-20 h-20 rotate-[25deg]" viewBox="0 0 100 100">
         <path d="M50 0L61 39L100 39L69 62L80 100L50 75L20 100L31 62L0 39L39 39Z" fill="var(--accent-lime)"/>
     </svg>
-    <div className="hero-sticker absolute top-[25%] right-[10%] sm:right-[15%] w-12 h-12 bg-[--accent-lime] rounded-full"></div>
+    <div data-speed="0.25" className="hero-sticker absolute top-[25%] right-[10%] sm:right-[15%] w-12 h-12 bg-[--accent-lime] rounded-full"></div>
 </section>
 
-        <section id="problem" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
-             <div className="terminal-window max-w-4xl mx-auto p-4 sm:p-6 md:p-8 font-ui text-lg sm:text-xl md:text-3xl text-[--accent-lime] space-y-2">
-                <p className="h-8 md:h-10" id="terminal-text-1"></p>
-                <p className="h-8 md:h-10" id="terminal-text-2"></p>
-                <div className="flex items-center h-8 md:h-10">
-                    <p id="terminal-text-3" className="pr-2"></p>
-                    <span id="terminal-cursor" className="inline-block w-3 h-6 md:w-4 md:h-8 bg-[--accent-lime] invisible"></span>
+        <section id="problem">
+            <div className="problem-panels-container flex">
+                <div className="problem-panel flex justify-center items-center p-4 sm:p-8">
+                    <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center comic-panel-card p-8 bg-orange-100">
+                         <OutdatedWebsiteSVG className="w-full h-auto max-w-sm mx-auto" />
+                         <div className="text-center md:text-left space-y-4">
+                            <h3 className="font-headline text-4xl lg:text-5xl">Outdated Sites Lose Trust</h3>
+                            <p className="font-ui text-lg lg:text-xl">An old, glitchy website feels like a neglected storefront. It pushes potential customers away before you can even say "hello."</p>
+                         </div>
+                    </div>
                 </div>
+                 <div className="problem-panel flex justify-center items-center p-4 sm:p-8">
+                     <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center comic-panel-card p-8 bg-cyan-100" style={{transform: 'rotate(1deg)', boxShadow: '10px 10px 0 var(--accent-orange)'}}>
+                          <div className="text-center md:text-left space-y-4 order-last md:order-first">
+                             <h3 className="font-headline text-4xl lg:text-5xl">Slow Apps Lose Customers</h3>
+                             <p className="font-ui text-lg lg:text-xl">Every second counts. A slow-loading app is a closed app. Performance isn't a feature; it's a foundation.</p>
+                          </div>
+                          <SlowAppSVG className="w-full h-auto max-w-sm mx-auto" />
+                     </div>
+                 </div>
+                 <div className="problem-panel flex justify-center items-center p-4 sm:p-8">
+                      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center comic-panel-card p-8 bg-fuchsia-100" style={{transform: 'rotate(-0.5deg)', boxShadow: '10px 10px 0 var(--accent-magenta)'}}>
+                         <ConfusingDesignSVG className="w-full h-auto max-w-sm mx-auto" />
+                          <div className="text-center md:text-left space-y-4">
+                             <h3 className="font-headline text-4xl lg:text-5xl">Bad Design Loses Money</h3>
+                             <p className="font-ui text-lg lg:text-xl">A confusing layout is a dead end. If users can't find what they need, they'll find a competitor who makes it easy for them.</p>
+                          </div>
+                     </div>
+                 </div>
             </div>
         </section>
 
         <section id="philosophy" className="py-20 md:py-32 px-4 sm:px-6 md:px-8 text-center">
              <div className="max-w-5xl mx-auto space-y-12">
-                <p className="philosophy-line text-xl md:text-2xl lg:text-3xl leading-relaxed">
+                <p className="philosophy-line text-xl md:text-2xl lg:text-3xl leading-relaxed font-ui">
                     We believe technology should feel simple, design should feel natural, and delivery should always be before time.
                 </p>
                  <div className="relative">
-                    <h2 className="philosophy-punchline font-headline text-5xl md:text-7xl lg:text-9xl">
-                        Here at VAR, we don’t believe in balance — we believe in excellence.
-                    </h2>
-                    <ExcellenceUnderline className="philosophy-underline absolute -bottom-2 md:-bottom-4 left-0 w-full h-auto"/>
+                     <h2 className="philosophy-punchline font-headline text-5xl md:text-7xl lg:text-9xl">
+                         Here at VAR, we don’t believe in balance — we believe in excellence.
+                     </h2>
+                     <ExcellenceUnderline className="philosophy-underline absolute -bottom-2 md:-bottom-4 left-0 w-full h-auto"/>
                  </div>
             </div>
         </section>
@@ -856,13 +1024,13 @@ React.useLayoutEffect(() => {
 
                 <div className="solution-right space-y-6 text-center lg:text-left">
                      <h2 className="font-headline text-4xl md:text-5xl lg:text-6xl">A Four-Step Symphony of Creation</h2>
-                     <p className="text-lg md:text-xl lg:text-2xl leading-relaxed">
-                        We transform your vision into a digital masterpiece. Our process is a fusion of creative strategy and technical precision, ensuring every pixel and line of code serves a purpose. It's a true&nbsp;
-                        <span className="relative inline-block font-headline text-lime-500/50" style={{'--accent-lime': '#FF00DD'}}>
-                            synergy
-                            <ExcellenceUnderline className="solution-underline absolute -bottom-1 md:-bottom-2 left-0 w-full h-auto"/>
-                        </span>
-                        &nbsp;between your goals and our expertise, resulting in a product that's not just built, but thoughtfully engineered for success.
+                     <p className="text-lg md:text-xl lg:text-2xl leading-relaxed font-ui">
+                         We transform your vision into a digital masterpiece. Our process is a fusion of creative strategy and technical precision, ensuring every pixel and line of code serves a purpose. It's a true&nbsp;
+                         <span className="relative inline-block font-headline" style={{color: 'var(--accent-magenta)', WebkitTextStroke: '0px'}}>
+                             synergy
+                             <ExcellenceUnderline className="solution-underline absolute -bottom-1 md:-bottom-2 left-0 w-full h-auto" style={{"--accent-lime": "var(--accent-magenta)"}}/>
+                         </span>
+                         &nbsp;between your goals and our expertise, resulting in a product that's not just built, but thoughtfully engineered for success.
                      </p>
                 </div>
 
@@ -883,8 +1051,8 @@ React.useLayoutEffect(() => {
                 </div>
             </div>
             <div className="space-y-4 text-center md:text-left">
-                <h3 className="font-headline text-4xl text-[--accent-lime]">Blazing Performance</h3>
-                <p className="text-lg leading-relaxed">
+                <h3 className="font-headline text-4xl" style={{color: 'var(--accent-magenta)'}}>Blazing Performance</h3>
+                <p className="text-lg leading-relaxed font-ui">
                     Ever waited for a website to load forever? Not on our watch. We engineer every solution for lightning-fast delivery and seamless scalability.
                 </p>
                 <p className="text-base text-gray-600 font-ui">
@@ -895,8 +1063,8 @@ React.useLayoutEffect(() => {
 
         <div className="proof-container group hover-lime tilt-right grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 mb-20">
             <div className="space-y-4 text-center md:text-left order-last md:order-first">
-                <h3 className="font-headline text-4xl text-[--accent-magenta]">Fort Knox Security</h3>
-                <p className="text-lg leading-relaxed">
+                <h3 className="font-headline text-4xl" style={{color: 'var(--accent-lime)'}}>Fort Knox Security</h3>
+                <p className="text-lg leading-relaxed font-ui">
                     Your data and your users' trust are paramount. Our "secure by design" philosophy means security is baked into every layer of your application.
                 </p>
                 <p className="text-base text-gray-600 font-ui">
@@ -919,9 +1087,9 @@ React.useLayoutEffect(() => {
                 </div>
             </div>
             <div className="space-y-4 text-center md:text-left">
-                <h3 className="font-headline text-4xl text-[--accent-lime]">Intuitive & Beautiful</h3>
-                <p className="text-lg leading-relaxed">
-                   Design isn't just about looks; it's about how it works. We craft interfaces that are a joy to use, intuitive to navigate, and stunning to behold.
+                <h3 className="font-headline text-4xl" style={{color: 'var(--accent-magenta)'}}>Intuitive & Beautiful</h3>
+                <p className="text-lg leading-relaxed font-ui">
+                    Design isn't just about looks; it's about how it works. We craft interfaces that are a joy to use, intuitive to navigate, and stunning to behold.
                 </p>
                 <p className="text-base text-gray-600 font-ui">
                     User-centered, accessible, and modern.
@@ -931,9 +1099,9 @@ React.useLayoutEffect(() => {
 
         <div className="proof-container group hover-lime tilt-right grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12">
              <div className="space-y-4 text-center md:text-left order-last md:order-first">
-                <h3 className="font-headline text-4xl text-[--accent-magenta]">On-Time. Every Time.</h3>
-                <p className="text-lg leading-relaxed">
-                   Deadlines aren't just suggestions; they're commitments. Our streamlined agile processes ensure your project is delivered on time, without fail.
+                <h3 className="font-headline text-4xl" style={{color: 'var(--accent-lime)'}}>On-Time. Every Time.</h3>
+                <p className="text-lg leading-relaxed font-ui">
+                    Deadlines aren't just suggestions; they're commitments. Our streamlined agile processes ensure your project is delivered on time, without fail.
                 </p>
                 <p className="text-base text-gray-600 font-ui">
                     Agile methodologies, clear communication.
@@ -942,7 +1110,7 @@ React.useLayoutEffect(() => {
             <div className="proof-card window-card flex flex-col">
                 <div className="window-header"><h3 className="font-ui window-title">04. Delivered Before Time</h3><WindowControls/></div>
                 <div className="p-6 md:p-8 flex-grow flex justify-center items-center h-48 md:h-auto">
-                    <BoltSVG className="w-32 h-32 mb-14 md:w-40 md:h-40 text-gray-800" />
+                    <BoltSVG className="w-32 h-32 mb-20 md:w-40 md:h-40 text-gray-800" />
                 </div>
             </div>
         </div>
@@ -955,22 +1123,22 @@ React.useLayoutEffect(() => {
                     <div className="window-header"><h3 className="font-ui window-title text-sm sm:text-base">Your first step online.</h3><WindowControls/></div>
                     <div className="p-6 md:p-8 space-y-4">
                         <h4 className="font-headline text-3xl">Starter</h4>
-                        <p className="text-base md:text-lg">Perfect for individuals and small projects getting off the ground.</p>
+                        <p className="text-base md:text-lg font-ui">Perfect for individuals and small projects getting off the ground.</p>
                     </div>
                 </div>
                  <div className="pricing-card window-card relative md:col-span-2 lg:col-span-1">
-                    <div className="best-value-sticker absolute -top-6 -right-6 font-headline text-lg bg-[--accent-magenta] text-[--text-primary] px-4 py-2 rotate-[10deg] border-2 border-black">BEST VALUE</div>
+                    <div className="best-value-sticker absolute -top-6 -right-6 font-headline text-lg bg-[--accent-magenta] text-[--text-primary] px-4 py-2 rotate-[10deg] border-2 border-black" style={{WebkitTextStroke: '0px'}}>BEST VALUE</div>
                     <div className="window-header"><h3 className="font-ui window-title text-sm sm:text-base">Built to grow with you.</h3><WindowControls/></div>
                     <div className="p-6 md:p-8 space-y-4">
                         <h4 className="font-headline text-4xl">Professional</h4>
-                        <p className="text-base md:text-lg">The ideal package for growing businesses that need to make an impact.</p>
+                        <p className="text-base md:text-lg font-ui">The ideal package for growing businesses that need to make an impact.</p>
                     </div>
                 </div>
                 <div className="pricing-card window-card md:col-start-1 md:col-end-3 lg:col-auto">
                     <div className="window-header"><h3 className="font-ui window-title text-sm sm:text-base">Custom. Powerful. Limitless.</h3><WindowControls/></div>
                     <div className="p-6 md:p-8 space-y-4">
                         <h4 className="font-headline text-3xl">Enterprise</h4>
-                        <p className="text-base md:text-lg">Fully custom solutions for established companies with unique needs.</p>
+                        <p className="text-base md:text-lg font-ui">Fully custom solutions for established companies with unique needs.</p>
                     </div>
                 </div>
             </div>
@@ -982,20 +1150,20 @@ React.useLayoutEffect(() => {
 
         </section>
 
-        <section id="closing" className="min-h-screen bg-[--text-primary] text-[--bg-primary] flex flex-col justify-center items-center text-center p-4 md:p-8">
-            <h2 className="closing-headline font-headline text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-[--bg-primary] leading-snug">Your vision. Our code. Together,we    build the future.</h2>
-             <div className="mt-12">
-                 <a href="https://var-contact-us.vercel.app/" target="_blank" rel="noopener noreferrer" className="press-effect bg-[--accent-lime] text-[--text-primary] font-ui text-2xl sm:text-3xl p-4 sm:p-6 hover:bg-[--bg-primary] hover:text-[--accent-lime] inline-block">
-                    <span className="btn-arrow-icon mr-2">→</span> Let’s Talk
-                </a>
-            </div>
-        </section>
+            <section id="closing" className="min-h-screen bg-[--text-primary] text-[#D4FF00] flex flex-col justify-center items-center text-center p-4 md:p-8">
+                <h2 className="closing-headline font-headline text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-snug" style={{color: 'var(--bg-primary)', WebkitTextStroke: '0px'}}>Your vision Our code Together, we build the FUTURE.</h2>
+                <div className="mt-12">
+                    <a href="https://var-contact-us.vercel.app/" target="_blank" rel="noopener noreferrer" className="press-effect bg-[--accent-lime] text-[--text-primary] font-ui text-2xl sm:text-3xl p-4 sm:p-6 hover:bg-[--bg-primary] hover:text-[--accent-lime] inline-block">
+                        <span className="btn-arrow-icon mr-2">→</span> Let’s Talk
+                    </a>
+                </div>
+            </section>
         
         <footer id="footer" className="py-16 px-4 md:px-8">
     <div className="max-w-7xl mx-auto">
         
         <div className="text-center mb-12">
-             <a href="#hero" className="font-headline text-5xl text-black">VAR</a>
+             <a href="#hero" className="font-headline text-5xl" style={{WebkitTextStroke: '0px'}}>VAR</a>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-y-10 gap-x-8 text-center md:text-left">
@@ -1027,6 +1195,10 @@ React.useLayoutEffect(() => {
                 </ul>
             </div>
             
+            <div>
+                <h4 className="font-ui text-2xl mb-4 text-black">Our Philosophy</h4>
+                <p className="font-ui text-lg">We build digital experiences that are not just beautiful, but are blazingly fast, impeccably secure, and intuitively designed for your users.</p>
+            </div>
 
 
         </div>
