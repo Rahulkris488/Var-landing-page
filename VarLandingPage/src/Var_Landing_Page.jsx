@@ -1,10 +1,8 @@
 import React from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { TextPlugin } from 'gsap/TextPlugin';
-import Lenis from 'lenis';
-// NOTE: GSAP and its plugins are loaded via <script> tags in your main HTML file.
-// Lenis for smooth scrolling should be loaded the same way.
+
+// NOTE: GSAP and its plugins (ScrollTrigger, TextPlugin) are loaded 
+// via <script> tags in your main HTML file.
+// Lenis for smooth scrolling should also be loaded this way.
 // This is a reliable method for this setup and avoids potential bundling issues.
 
 const GlobalStyles = () => (
@@ -30,7 +28,7 @@ const GlobalStyles = () => (
         text-transform: uppercase;
         -webkit-text-stroke: 1px var(--text-primary);
         text-stroke: 1px var(--text-primary);
-        color: var(--text-primary); /* FIX: Was 'transparent' */
+        color: var(--text-primary);
     }
     .font-ui { font-family: 'VT323', monospace; }
     .font-signature {
@@ -105,6 +103,19 @@ const GlobalStyles = () => (
     .split-text-char {
       display: inline-block;
       position: relative;
+    }
+
+    /* --- PERFORMANCE OPTIMIZATIONS --- */
+    .mobile-menu-pane {
+        /* Hint to the browser to optimize the transform animation */
+        will-change: transform;
+    }
+    .founder-card, .pricing-card, .comic-panel-card {
+        /* Hint for scroll-triggered animations */
+        will-change: transform, opacity;
+    }
+    .proof-card {
+        will-change: transform, opacity, box-shadow;
     }
 
     /* --- PROBLEM SECTION (COMIC BOOK) STYLES --- */
@@ -183,9 +194,10 @@ const GlobalStyles = () => (
       box-shadow: 12px 12px 0px var(--accent-lime);
     }
     
-    /* --- INTERACTIVE BOOK STYLES --- */
+    /* --- INTERACTIVE BOOK STYLES (RESPONSIVE FIX) --- */
     .solution-left {
         perspective: 2000px;
+        min-height: 400px; /* Give space for the book on mobile */
     }
     .book-container {
         position: relative;
@@ -194,19 +206,23 @@ const GlobalStyles = () => (
         height: 450px;
         margin: 0 auto;
         transform-style: preserve-3d;
-        transform: scale(0.8);
+        transform: scale(0.75); /* Base scale for small mobile */
+    }
+    @media (min-width: 480px) {
+        .book-container { transform: scale(0.8); }
     }
     @media (min-width: 640px) {
-      .book-container { transform: scale(0.9); }
+        .solution-left { min-height: 450px; }
+        .book-container { transform: scale(0.9); }
     }
     @media (min-width: 1024px) {
-      .book-container { transform: scale(1); }
+        .book-container { transform: scale(1); }
     }
     .book-cover, .book-page {
         position: absolute;
         inset: 0;
         transform-origin: left center;
-        transition: transform 1.2s ease-in-out;
+        transition: transform 1.2s cubic-bezier(0.65, 0, 0.35, 1);
         transform-style: preserve-3d;
         box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     }
@@ -217,6 +233,7 @@ const GlobalStyles = () => (
         position: absolute;
         inset: 0;
         backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
     }
     .book-cover {
         cursor: pointer;
@@ -327,7 +344,7 @@ const GlobalStyles = () => (
       transform: translateY(-3px) scale(1.1);
       color: var(--accent-magenta);
     }
-  `}</style>
+ `}</style>
 );
 
 const Navbar = () => {
@@ -346,7 +363,7 @@ const Navbar = () => {
           <a href="#closing" className="nav-link">Contact</a>
         </div>
         <div className="md:hidden">
-          <button onClick={toggleMenu} aria-label="Toggle menu" className="relative z-10">
+          <button onClick={toggleMenu} aria-label="Toggle menu" className="relative z-10 p-2 -mr-2">
             {isMenuOpen ? (
                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             ) : (
@@ -354,7 +371,8 @@ const Navbar = () => {
             )}
           </button>
         </div>
-        <div className={`absolute top-0 left-0 w-full bg-white/95 backdrop-blur-md mt-0 rounded-lg border border-white/30 p-4 md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? 'transform translate-y-0' : 'transform -translate-y-[150%]'}`}>
+        {/* Added .mobile-menu-pane class for performance optimization */}
+        <div className={`mobile-menu-pane absolute top-0 left-0 w-full bg-white/95 backdrop-blur-md mt-0 rounded-lg border border-white/30 p-4 md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? 'transform translate-y-0' : 'transform -translate-y-[150%]'}`}>
           <nav className="flex flex-col items-center space-y-4 mt-16">
             <a href="#hero" className="block text-center text-xl py-2 nav-link" onClick={toggleMenu}>Home</a>
             <a href="#about-us" className="block text-center text-xl py-2 nav-link" onClick={toggleMenu}>About</a>
@@ -377,7 +395,7 @@ const WindowControls = () => (
   </div>
 );
 
-const VarBotWaving = ({ className }) => (
+const VarBotWaving = React.memo(({ className }) => (
     <svg className={className} viewBox="0 0 150 200" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 4, fill: "none", stroke: "var(--text-primary)"}}>
         <rect x="35" y="20" width="80" height="60" fill="var(--bg-primary)"/>
         <path d="M75,20 V10 H65 V5 h20 v5 H75"/>
@@ -395,17 +413,17 @@ const VarBotWaving = ({ className }) => (
         <path d="M60,150 C 50,170 40,190 50,200"/>
         <path d="M90,150 C 100,170 110,190 100,200"/>
     </svg>
-);
+));
 
-const BrainIllustration = ({ className }) => ( <svg className={className} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, fill: "none", stroke: "var(--text-primary)"}}> <path d="M50 10 C 20 10, 20 40, 35 40 C 25 55, 40 60, 50 55 C 60 60, 75 55, 65 40 C 80 40, 80 10, 50 10 Z" fill="var(--bg-primary)"/> <path d="M50 10 V 55" /> <path d="M35 40 C 40 30, 60 30, 65 40" /> <path d="M40 60 C 30 70, 30 80, 20 90" /> <path d="M60 60 C 70 70, 70 80, 80 90" /> <ellipse cx="18" cy="92" rx="10" ry="4" fill="var(--bg-primary)" /> <ellipse cx="82" cy="92" rx="10" ry="4" fill="var(--bg-primary)" /> </svg> );
-const HandIllustration = ({ className }) => ( <svg className={className} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, fill: "none", stroke: "var(--text-primary)"}}> <path d="M20 90 C 10 70, 10 50, 25 40 C 35 35, 40 45, 40 50 L 50 90 Z" fill="var(--bg-primary)"/> <path d="M40 55 C 50 50, 55 60, 55 65 L 60 90 Z" fill="var(--bg-primary)"/> <path d="M55 70 C 65 65, 70 75, 70 80 L 70 90 Z" fill="var(--bg-primary)"/> <path d="M25 40 C 30 20, 50 10, 70 20" /> <rect x="65" y="20" width="10" height="10" fill="var(--bg-primary)"/> </svg> );
-const RocketIllustration = ({ className }) => ( <svg className={className} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, fill: "none", stroke: "var(--text-primary)"}}> <path d="M50 10 L 65 40 L 35 40 Z" fill="var(--bg-primary)"/> <rect x="35" y="40" width="30" height="40" fill="var(--bg-primary)"/> <path d="M35 80 L 20 95 L 35 85 Z" fill="var(--bg-primary)"/> <path d="M65 80 L 80 95 L 65 85 Z" fill="var(--bg-primary)"/> <path d="M50 80 L 40 95 H 60 Z" fill="var(--accent-lime)" stroke="none"/> </svg> );
-const ComputerIllustration = ({ className }) => ( <svg className={className} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, fill: "none", stroke: "var(--text-primary)"}}> <rect x="20" y="30" width="60" height="40" fill="var(--bg-primary)"/> <path d="M40 50 L 45 55 L 50 50" /> <path d="M60 50 L 65 55 L 70 50" /> <path d="M10 60 C 50 80, 50 80, 90 60" /> </svg> );
-const RocketSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="M6 2L3 6v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6l-3-4H6zM3.5 6h17M16 10a4 4 0 11-8 0" /> </svg> );
-const LockSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect> <path d="M7 11V7a5 5 0 0110 0v4"></path> </svg> );
-const WandSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="M15 4l6 6m-9-3l-6 6l9 9l6-6l-9-9z"></path> <path d="M9 21l-6-6"></path> <path d="M21 3L12 12"></path> </svg> );
-const BoltSVG = ({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon> </svg> );
-const ExcellenceUnderline = ({ className }) => (
+const BrainIllustration = React.memo(({ className }) => ( <svg className={className} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, fill: "none", stroke: "var(--text-primary)"}}> <path d="M50 10 C 20 10, 20 40, 35 40 C 25 55, 40 60, 50 55 C 60 60, 75 55, 65 40 C 80 40, 80 10, 50 10 Z" fill="var(--bg-primary)"/> <path d="M50 10 V 55" /> <path d="M35 40 C 40 30, 60 30, 65 40" /> <path d="M40 60 C 30 70, 30 80, 20 90" /> <path d="M60 60 C 70 70, 70 80, 80 90" /> <ellipse cx="18" cy="92" rx="10" ry="4" fill="var(--bg-primary)" /> <ellipse cx="82" cy="92" rx="10" ry="4" fill="var(--bg-primary)" /> </svg> ));
+const HandIllustration = React.memo(({ className }) => ( <svg className={className} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, fill: "none", stroke: "var(--text-primary)"}}> <path d="M20 90 C 10 70, 10 50, 25 40 C 35 35, 40 45, 40 50 L 50 90 Z" fill="var(--bg-primary)"/> <path d="M40 55 C 50 50, 55 60, 55 65 L 60 90 Z" fill="var(--bg-primary)"/> <path d="M55 70 C 65 65, 70 75, 70 80 L 70 90 Z" fill="var(--bg-primary)"/> <path d="M25 40 C 30 20, 50 10, 70 20" /> <rect x="65" y="20" width="10" height="10" fill="var(--bg-primary)"/> </svg> ));
+const RocketIllustration = React.memo(({ className }) => ( <svg className={className} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, fill: "none", stroke: "var(--text-primary)"}}> <path d="M50 10 L 65 40 L 35 40 Z" fill="var(--bg-primary)"/> <rect x="35" y="40" width="30" height="40" fill="var(--bg-primary)"/> <path d="M35 80 L 20 95 L 35 85 Z" fill="var(--bg-primary)"/> <path d="M65 80 L 80 95 L 65 85 Z" fill="var(--bg-primary)"/> <path d="M50 80 L 40 95 H 60 Z" fill="var(--accent-lime)" stroke="none"/> </svg> ));
+const ComputerIllustration = React.memo(({ className }) => ( <svg className={className} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, fill: "none", stroke: "var(--text-primary)"}}> <rect x="20" y="30" width="60" height="40" fill="var(--bg-primary)"/> <path d="M40 50 L 45 55 L 50 50" /> <path d="M60 50 L 65 55 L 70 50" /> <path d="M10 60 C 50 80, 50 80, 90 60" /> </svg> ));
+const RocketSVG = React.memo(({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="M6 2L3 6v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6l-3-4H6zM3.5 6h17M16 10a4 4 0 11-8 0" /> </svg> ));
+const LockSVG = React.memo(({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect> <path d="M7 11V7a5 5 0 0110 0v4"></path> </svg> ));
+const WandSVG = React.memo(({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="M15 4l6 6m-9-3l-6 6l9 9l6-6l-9-9z"></path> <path d="M9 21l-6-6"></path> <path d="M21 3L12 12"></path> </svg> ));
+const BoltSVG = React.memo(({ className }) => ( <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon> </svg> ));
+const ExcellenceUnderline = React.memo(({ className }) => (
     <svg className={className} viewBox="0 0 200 20" preserveAspectRatio="none">
         <defs>
             <clipPath id="underline-clip">
@@ -414,9 +432,9 @@ const ExcellenceUnderline = ({ className }) => (
         </defs>
         <path clipPath="url(#underline-clip)" d="M 2,10 C 30,15 70,-5 100,10 C 130,25 170,-5 198,10" stroke="var(--accent-lime)" fill="none" strokeWidth="4" strokeLinecap="round"/>
     </svg>
-);
+));
 
-const GridPattern = ({ className }) => (
+const GridPattern = React.memo(({ className }) => (
     <svg className={className} width="200" height="200" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -425,10 +443,10 @@ const GridPattern = ({ className }) => (
         </defs>
         <rect width="200" height="200" fill="url(#smallGrid)" />
     </svg>
-);
+));
 
-// --- NEW SVGS FOR PROBLEM SECTION ---
-const OutdatedWebsiteSVG = ({className}) => (
+// --- SVGS FOR PROBLEM SECTION ---
+const OutdatedWebsiteSVG = React.memo(({className}) => (
     <svg className={className} viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect x="20" y="20" width="160" height="110" rx="8" stroke="var(--text-primary)" strokeWidth="4" fill="var(--bg-primary)"/>
         <path d="M20 45H180" stroke="var(--text-primary)" strokeWidth="4"/>
@@ -449,9 +467,9 @@ const OutdatedWebsiteSVG = ({className}) => (
             <path d="M30 90 H 170" stroke="var(--accent-magenta)" strokeWidth="2"/>
         </g>
     </svg>
-);
+));
 
-const SlowAppSVG = ({className}) => (
+const SlowAppSVG = React.memo(({className}) => (
     <svg className={className} viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M100 20 L120 50 L100 80 L80 50 Z" stroke="var(--text-primary)" strokeWidth="4" fill="var(--bg-primary)"/>
         <circle cx="100" cy="50" r="5" fill="var(--text-primary)"/>
@@ -464,9 +482,9 @@ const SlowAppSVG = ({className}) => (
             <path d="M75 110 C 70 100 85 100 80 110" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round"/>
         </g>
     </svg>
-);
+));
 
-const ConfusingDesignSVG = ({className}) => (
+const ConfusingDesignSVG = React.memo(({className}) => (
     <svg className={className} viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M50 30 L150 30 L180 80 L20 80 Z" stroke="var(--text-primary)" strokeWidth="4" fill="var(--bg-primary)"/>
         <path d="M80 80 L120 120 L100 80" stroke="var(--text-primary)" strokeWidth="4" fill="var(--bg-primary)"/>
@@ -479,7 +497,7 @@ const ConfusingDesignSVG = ({className}) => (
             <circle cx="100" cy="75" r="3" fill="var(--text-primary)"/>
         </g>
     </svg>
-);
+));
 
 const services = [
   {
@@ -518,12 +536,12 @@ const BookComponent = () => {
     const animationSequenceTimer = React.useRef(null);
     const currentAnimationId = React.useRef(null);
 
-    const cleanupTimers = () => {
+    const cleanupTimers = React.useCallback(() => {
         clearTimeout(interactionTimer.current);
         clearTimeout(animationSequenceTimer.current);
-    };
+    }, []);
 
-    const animatePages = (targetIndex) => {
+    const animatePages = React.useCallback((targetIndex) => {
         const animationId = Date.now();
         currentAnimationId.current = animationId;
         const pageTurnDelay = 200;
@@ -550,22 +568,25 @@ const BookComponent = () => {
             });
         };
         step();
-    };
+    }, []);
 
-    const handleMouseEnterTab = (targetIndex) => {
+    const handleMouseEnterTab = React.useCallback((targetIndex) => {
         cleanupTimers();
         if (targetIndex === activePageIndex) return;
         interactionTimer.current = setTimeout(() => animatePages(targetIndex), 150);
-    };
+    }, [activePageIndex, animatePages, cleanupTimers]);
 
-    const handleMouseLeaveBook = () => {
+    const handleMouseLeaveBook = React.useCallback(() => {
         cleanupTimers();
         interactionTimer.current = setTimeout(() => animatePages(-1), 200);
-    };
-
-    const handleMouseEnterBook = () => cleanupTimers();
+    }, [animatePages, cleanupTimers]);
     
-    React.useEffect(() => () => cleanupTimers(), []);
+    const handleMouseEnterBook = React.useCallback(() => cleanupTimers(), [cleanupTimers]);
+    
+    React.useEffect(() => {
+        // Cleanup on unmount
+        return () => cleanupTimers();
+    }, [cleanupTimers]);
 
     const getPageStyle = (index) => {
         const isTurned = activePageIndex > -1 && index < activePageIndex;
@@ -586,6 +607,7 @@ const BookComponent = () => {
             <div 
                 className={`book-cover ${activePageIndex > -1 ? 'is-open' : ''}`}
                 style={{ zIndex: activePageIndex > -1 ? 1 : 100 }}
+                onClick={() => animatePages(activePageIndex === -1 ? 0 : -1)}
             >
                 <div className="book-face book-face--front">
                      <h3 className="font-headline text-4xl" style={{color: 'var(--bg-primary)', WebkitTextStroke: '0px'}}>The Four-Step Symphony of Ours</h3>
@@ -605,6 +627,7 @@ const BookComponent = () => {
                                     className="page-tab font-ui" 
                                     style={{ backgroundColor: service.color }}
                                     onMouseEnter={() => handleMouseEnterTab(index)}
+                                    onClick={(e) => { e.stopPropagation(); animatePages(index); }}
                                 >
                                     {service.title}
                                 </div>
@@ -655,7 +678,7 @@ const AboutUs = () => {
 
     return (
         <section id="about-us" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
-            <div className="max-w-5xl sd mx-auto text-center">
+            <div className="max-w-5xl mx-auto text-center">
                 <h2 className="font-headline text-5xl md:text-7xl mb-16 about-us-headline">Meet The Founders</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
                     {teamMembers.map((member) => (
@@ -702,20 +725,25 @@ React.useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js';
     script.async = true;
+    let lenis;
+    let rafId;
+
+    function raf(time) {
+        lenis.raf(time);
+        rafId = requestAnimationFrame(raf);
+    }
 
     script.onload = () => {
         if (window.Lenis) {
-            const lenis = new window.Lenis();
-            function raf(time) {
-                lenis.raf(time);
-                requestAnimationFrame(raf);
-            }
-            requestAnimationFrame(raf);
+            lenis = new window.Lenis();
+            rafId = requestAnimationFrame(raf);
         }
     };
     document.body.appendChild(script);
 
     return () => {
+        if (lenis) lenis.destroy();
+        if (rafId) cancelAnimationFrame(rafId);
         const existingScript = document.querySelector(`script[src="${script.src}"]`);
         if (existingScript) {
             document.body.removeChild(existingScript);
@@ -932,9 +960,9 @@ React.useLayoutEffect(() => {
         
 <section id="hero" className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">
     <div className="absolute inset-0 halftone-bg opacity-30"></div>
-    <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center max-w-7xl mx-auto mt-16 lg:mt-0">
+    <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center max-w-7xl mx-auto mt-24 lg:mt-0">
         <div className="relative z-10 space-y-6 text-center lg:text-left">
-            <div className="hero-card window-card p-6 md:p-8 mt-16">
+            <div className="hero-card window-card p-6 md:p-8">
             
 <h1 className="hero-headline font-headline text-4xl sm:text-5xl lg:text-6xl leading-tight ">
     <span className="block headline-line">Every business</span>
@@ -1000,14 +1028,14 @@ React.useLayoutEffect(() => {
 
         <section id="philosophy" className="py-20 md:py-32 px-4 sm:px-6 md:px-8 text-center">
              <div className="max-w-5xl mx-auto space-y-12">
-                <p className="philosophy-line text-xl md:text-2xl lg:text-3xl leading-relaxed font-ui">
-                    We believe technology should feel simple, design should feel natural, and delivery should always be before time.
-                </p>
+                 <p className="philosophy-line text-xl md:text-2xl lg:text-3xl leading-relaxed font-ui">
+                     We believe technology should feel simple, design should feel natural, and delivery should always be before time.
+                 </p>
                  <div className="relative">
-                     <h2 className="philosophy-punchline font-headline text-5xl md:text-7xl lg:text-9xl">
-                         Here at VAR, we don’t believe in balance — we believe in excellence.
-                     </h2>
-                     <ExcellenceUnderline className="philosophy-underline absolute -bottom-2 md:-bottom-4 left-0 w-full h-auto"/>
+                      <h2 className="philosophy-punchline font-headline text-5xl md:text-7xl lg:text-9xl">
+                          Here at VAR, we don’t believe in balance — we believe in excellence.
+                      </h2>
+                      <ExcellenceUnderline className="philosophy-underline absolute -bottom-2 md:-bottom-4 left-0 w-full h-auto"/>
                  </div>
             </div>
         </section>
@@ -1018,7 +1046,7 @@ React.useLayoutEffect(() => {
             <GridPattern className="absolute top-1/4 -left-20 opacity-20 deco-grid" />
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
                 
-                <div className="solution-left flex items-center justify-center lg:min-h-[450px]">
+                <div className="solution-left flex items-center justify-center">
                     <BookComponent />
                 </div>
 
@@ -1110,7 +1138,7 @@ React.useLayoutEffect(() => {
             <div className="proof-card window-card flex flex-col">
                 <div className="window-header"><h3 className="font-ui window-title">04. Delivered Before Time</h3><WindowControls/></div>
                 <div className="p-6 md:p-8 flex-grow flex justify-center items-center h-48 md:h-auto">
-                    <BoltSVG className="w-32 h-32 mb-20 md:w-40 md:h-40 text-gray-800" />
+                    <BoltSVG className="w-32 h-32 md:w-40 md:h-40 text-gray-800" />
                 </div>
             </div>
         </div>
@@ -1182,7 +1210,7 @@ React.useLayoutEffect(() => {
                 <h4 className="font-ui text-2xl mb-4 text-black">Connect</h4>
                 <ul className="space-y-3">
                     <li>
-                        <a href="mailto:hello@var.agency" className="font-ui text-lg footer-link">var.studio.agency@gmail.com</a>
+                        <a href="mailto:var.studio.agency@gmail.com" className="font-ui text-lg footer-link">var.studio.agency@gmail.com</a>
                     </li>
                     <li className="flex items-center space-x-5 mt-4 justify-center md:justify-start">
                         <a href="#" className="social-icon">
@@ -1213,4 +1241,3 @@ React.useLayoutEffect(() => {
     </>
   );
 }
-
