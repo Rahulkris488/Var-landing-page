@@ -720,38 +720,43 @@ const LinkedInIcon = ({ className }) => (
 );
   const mainRef = React.useRef(null);
 
+// Add this whole block inside your App component
 React.useEffect(() => {
-    // --- SMOOTH SCROLL SETUP ---
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js';
-    script.async = true;
-    let lenis;
-    let rafId;
+    // Prevents the context menu (right-click menu) from appearing
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+    };
 
-    function raf(time) {
-        if (lenis) {
-            lenis.raf(time);
+    // Prevents keyboard shortcuts that open developer tools
+    const handleKeyDown = (e) => {
+        // Disable F12
+        if (e.key === 'F12') {
+            e.preventDefault();
         }
-        rafId = requestAnimationFrame(raf);
-    }
-
-    script.onload = () => {
-        if (window.Lenis) {
-            lenis = new window.Lenis();
-            rafId = requestAnimationFrame(raf);
+        // Disable Ctrl+Shift+I (Windows/Linux) or Cmd+Option+I (Mac)
+        if ((e.ctrlKey && e.shiftKey && e.key === 'I') || (e.metaKey && e.altKey && e.key === 'i')) {
+            e.preventDefault();
+        }
+        // Disable Ctrl+Shift+J (Windows/Linux) or Cmd+Option+J (Mac)
+        if ((e.ctrlKey && e.shiftKey && e.key === 'J') || (e.metaKey && e.altKey && e.key === 'j')) {
+            e.preventDefault();
+        }
+        // Disable Ctrl+U
+        if (e.ctrlKey && e.key === 'u') {
+            e.preventDefault();
         }
     };
-    document.body.appendChild(script);
 
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('keydown', handleKeyDown);
+
+    // This is a cleanup function that removes the event listeners 
+    // when the component is no longer on the screen, preventing memory leaks.
     return () => {
-        if (lenis) lenis.destroy();
-        if (rafId) cancelAnimationFrame(rafId);
-        const existingScript = document.querySelector(`script[src="${script.src}"]`);
-        if (existingScript) {
-            document.body.removeChild(existingScript);
-        }
+        document.removeEventListener('contextmenu', handleContextMenu);
+        document.removeEventListener('keydown', handleKeyDown);
     };
-}, []);
+}, []); // The empty array ensures this effect runs only once
 
 React.useLayoutEffect(() => {
     // --- GSAP SETUP ---
@@ -1258,10 +1263,10 @@ React.useLayoutEffect(() => {
                     </li>
                     <li className="flex items-center space-x-5 mt-4 justify-center md:justify-start">
                         <a href="#" className="social-icon">
-                            <XIcon className="w-6 h-6"/>
+                            {/* <XIcon className="w-6 h-6"/> */}
                         </a>
                         <a href="#" className="social-icon">
-                            <LinkedInIcon className="w-6 h-6"/>
+                            {/* <LinkedInIcon className="w-6 h-6"/> */}
                         </a>
                     </li>
                 </ul>
