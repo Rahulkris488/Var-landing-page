@@ -1145,7 +1145,7 @@ React.useLayoutEffect(() => {
     </div>
 </section>
 
-        <section id="pricing" className="py-20 md:py-32 px-4 sm:px-6 md:px-8">
+        <section id="pricing" className="py-20 md:py-32 px-4 sm:px-6 md:px-8 overflow-hidden">
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 items-end">
                 <div className="pricing-card window-card">
                     <div className="window-header"><h3 className="font-ui window-title text-sm sm:text-base">Your first step online.</h3><WindowControls/></div>
@@ -1241,3 +1241,4 @@ React.useLayoutEffect(() => {
     </>
   );
 }
+
